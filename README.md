@@ -10,7 +10,8 @@ This is a study on model's impact on accuracy...
 Detailed rsults...
 
 ## Datasets
-1. **https://zenodo.org/records/7544891#.ZDQzsMLMLN8**
+The datasets are originally from 
+**https://zenodo.org/records/7544891#.ZDQzsMLMLN8**
    - Brotli
    - XGBoost
    - DConvert
@@ -19,47 +20,32 @@ Detailed rsults...
    - Kanzi
    - Jump3r
    - Spark
-
-2. **\cite{DeepPerf}**
+**https://github.com/DeepPerf/DeepPerf**
    - LLVM
    - BDB_C
    - HSQLDB
    - Polly
    - JavaGC
-
-3. **\cite{muhlbauer2023analyzing}**
+**https://zenodo.org/record/7504284#.ZDQ66sLMLN8**
    - Lrzip
-
-4. **\cite{flash}**
+**https://github.com/FlashRepo/Flash-MultiConfig**
    - noc-CM-log
    - SaC
-
-5. **\cite{jamshidi2018learning}**
+**https://github.com/pooyanjamshidi/deeparch-xplorer**
    - DeepArch
-
-6. **\cite{peng2021veer}**
+**https://github.com/anonymous12138/multiobj**
    - MariaDB
-
-7. **\cite{HINNPerf}**
+**https://drive.google.com/drive/folders/1qxYzd5Om0HE1rK0syYQsTPhTQEBjghLh**
    - Polly
-
-8. **\cite{cao2023cm}**
+**https://github.com/xdbdilab/CM-CASL**
    - Spark
    - Redis
    - Hadoop
    - Tomcat
-
-9. **\cite{krishna2020whence}**
+**https://github.com/ai-se/BEETLE**
    - Storm
 
-The datasets are originally from 
-'https://zenodo.org/records/7544891#.ZDQzsMLMLN8': Brotli
-'https://github.com/DeepPerf/DeepPerf', 
-'https://github.com/FlashRepo/Flash-MultiConfig', 
-'https://zenodo.org/record/7504284#.ZDQ66sLMLN8',
-'https://github.com/ai-se/BEETLE', Details of the datasets are given in our paper.
-
-
+ Details of the datasets are given in our paper.
 
 ## Raw rsults
 Raw data
