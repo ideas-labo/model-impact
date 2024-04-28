@@ -61,4 +61,4 @@ Raw data
 The experiment data reported in the work can be found at: https://xxx/xxx. The naming rule follow as []-[], e.g.
 
 ## Supplementary
-xxx.pdf contains the best and worst models in study
+supplementary.pdf contains the specific best and worst models in this study.
