@@ -1,0 +1,15 @@
+doepy==0.0.1
+imbalanced_learn==0.10.1
+imblearn==0.0
+matplotlib==3.7.1
+numpy==1.23.5
+pandas==2.0.2
+Pillow==9.5.0
+Pillow==9.5.0
+scikit_learn==1.2.2
+scipy==1.11.0
+tensorflow==2.12.0
+tensorflow_intel==2.12.0
+torch==2.0.1
+torchvision==0.15.2
+utils==1.0.1

@@ -1,0 +1,10 @@
+asposestorage==1.0.2
+doepy==0.0.1
+matplotlib==3.7.1
+numpy==1.23.5
+pandas==2.0.2
+scikit_learn==1.2.2
+scipy==1.11.0
+tensorflow==2.12.0
+tensorflow_intel==2.12.0
+util==0.0.1
