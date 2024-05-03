@@ -107,7 +107,7 @@ def ei(m,s,eta):
 
 
 def get_training_sequence_by_BOCA(training_indep, training_dep, all_indep,eta,file,model_name,filename,seed,step):
-    if model_name == "RF11":
+    if model_name == "RF_skip":
         model = model_randomforest(training_indep, training_dep)
     else:
         model = bagging(train_x=training_indep,train_y=training_dep,learning_model=model_name,file_name=filename,seed=seed,step=step,funcname="smac")
@@ -180,8 +180,6 @@ def get_best_configuration_id_BOCA(training_indep, training_dep, all_indep, eta,
 
             
 # 返回：对应decision的object，和decision（格式化之后）
-
-
 def run_smac(filename, model_name="RF",initial_size=10, maxlives=100, budget=30,seed=0):
     
     steps = 0
@@ -231,7 +229,3 @@ def run_smac(filename, model_name="RF",initial_size=10, maxlives=100, budget=30,
             break
     return np.array(xs), np.array(results), np.array(x_axis), result, best_loop, len(tuple_is)
 
-
-if __name__ == "__main__":
-    run_smac(filename="./Data_small/Apache_AllNumeric.csv",
-             initial_size=10, maxlives=10,budget=30)

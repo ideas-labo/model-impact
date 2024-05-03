@@ -1,5 +1,5 @@
 ## ParamILSParamILS
-## 没有封盖，一个benchmark，使用最简单的basicILS
+## symple basicILS
 
 import pandas as pd
 import numpy as np

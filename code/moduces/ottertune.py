@@ -1,6 +1,7 @@
 from util import read_file
 from util import lasso
 from util import get_objective
+from util.bagging import bagging
 from sklearn.preprocessing import StandardScaler
 import numpy as np
 import tensorflow as tf
@@ -8,7 +9,7 @@ import heapq
 import random
 import pickle
 from models import GPRNP
-from util.bagging import bagging
+
 
 def run_ottertune(initial_size, filename, model_name="GP", acqf_name = "UCB",budget=20, Beta=0.3,features_num=6,seed=0,maxlives=100):
     lives = maxlives

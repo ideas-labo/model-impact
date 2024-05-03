@@ -1,5 +1,3 @@
-
-
 import pandas as pd
 import numpy as np
 from sklearn.preprocessing import MinMaxScaler
@@ -11,8 +9,6 @@ from util.read_model import read_model_class
 from util.get_objective_model import get_path
 from scipy import spatial
 from util.get_objective import get_objective_score_with_similarity
-
-
 
 class solution_holder:
     def __init__(self, id, decisions, objective, rank):

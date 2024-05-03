@@ -16,7 +16,6 @@ from utils.HINNPerf_model_runner import ModelRunner
 from utils.HINNPerf_models import MLPHierarchicalModel
 from utils.mlp_sparse_model_tf2 import MLPSparseModel
 import torch
-from utils import PerfAL_model
 from torch.autograd import Variable
 import re
 import os

@@ -307,28 +307,3 @@ def run_tuneful(initial_size ,filename , model_name="GP",fraction_ratio=0.9,budg
 
     return np.array(xs), np.array(results), np.array(x_axis), best_result, best_loop, used_budget
 
-# if __name__ == '__main__':
-#     budget = 20
-#     fraction_ratio = 0.6
-
-#     configs = {'num_collections': 10}
-    
-#     random.seed(2)
-#     np.random.seed(2)
-
-#     # filename = "./Data/Apache_AllMeasurements.csv"
-#     # filename = "./Data/SQL_AllMeasurements.csv"
-#     filename = "./Data/Dune.csv"
-#     file_data = read_file.get_data(filename, configs['num_collections'])
-    
-#     header, features, target = read_file.load_features(file_data)
-#     important_features = get_sig_params(header, features, target, fraction=fraction_ratio)
-#     clean_data(important_features, file_data)
-#     reset_data(file_data, configs['num_collections'])
-
-#     result, x_axis, best_result = run_gpr_ei(configs, file_data, budget)
-    
-#     print("Best Result: ", best_result)
-    
-#     plt.plot(x_axis, result)
-#     plt.show()

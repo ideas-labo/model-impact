@@ -1,6 +1,4 @@
 import random
-## GA 遗传算法 with 两个性别 各自作用不同
-
 import pandas as pd
 import numpy as np
 from sklearn.preprocessing import MinMaxScaler

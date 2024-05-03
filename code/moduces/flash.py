@@ -6,6 +6,7 @@ from sklearn.tree import DecisionTreeRegressor
 import numpy as np
 from util.bagging import bagging
 import pickle
+
 # 定义变量
 class solution_holder:
     def __init__(self, id, decisions, objective, rank):
@@ -131,35 +132,4 @@ def run_flash(initial_size,filename,model_name="DT",seed=0,budget=20, maxlives=1
     best_training_solution = [ tt.rank for tt in training_set if min([t.objective[-1] for t in training_set]) == tt.objective[-1]]
     best_solution = [tt.rank for tt in training_set + testing_set if tt.objective[-1] == global_min]
     
-    # print ("差距:", min(best_training_solution) - min(best_solution)), len(training_set), " | ",
     return xs,results,x_axis,best_loop,best_result,len(results)+budget
-# if __name__ == "__main__":
-#     filenames = ["./Data/"+f for f in listdir("./Data")]
-#     initial_size = 20
-#     evals_dict = {}
-#     rank_diffs_dict = {}
-#     stats_dict = {}
-#     for filename in filenames:
-#         evals_dict[filename] = []
-#         rank_diffs_dict[filename] = []
-#         stats_dict[filename] = {}
-#         rank_diffs = []
-#         evals = []
-#         print (filename)
-#         for _ in range(20):
-#             temp1, temp2 = wrapper_run_active_learning(filename, initial_size)
-#             rank_diffs.append(temp1)
-#             evals.append(temp2)
-#         # print
-#         evals_dict[filename] = evals
-#         rank_diffs_dict[filename] = rank_diffs
-#         stats_dict[filename]["mean_rank_diff"] = np.mean(rank_diffs)
-#         stats_dict[filename]["std_rank_diff"] = np.std(rank_diffs)
-#         stats_dict[filename]["mean_evals"] = np.mean(evals)
-#         stats_dict[filename]["std_evals"] = np.std(evals)
-
-#     # import pickle
-#     # pickle.dump(evals_dict, open("./PickleLocker/ActiveLearning_Evals.p", "wr"))
-#     # pickle.dump(rank_diffs_dict, open("./PickleLocker/ActiveLearning_Rank_Diff.p", "wr"))
-#     # pickle.dump(stats_dict, open("./PickleLocker/ActiveLearning_Stats.p", "wr"))
-

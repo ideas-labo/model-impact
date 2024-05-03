@@ -10,7 +10,7 @@ from util import get_objective
 from util import read_file
 from util.bagging import bagging
 import pickle
-
+import math
 
 def model_randomforest(train_independent, train_dependent):
 
@@ -31,6 +31,7 @@ def ei(m,s,eta):
         f = calculate_f()
 
     return f
+
 def get_ei(pred, eta):  #eta最小值
     pred = np.array(pred).transpose(1, 0)
     m = np.mean(pred, axis=1)
@@ -49,8 +50,6 @@ def get_ei(pred, eta):  #eta最小值
         f = calculate_f()
 
     return f
-
-import math
 
 def fixed_interval_sample(lst, n, keep_ends=True):
     # 计算间隔
@@ -160,7 +159,7 @@ def get_best_configuration_id_BOCA(training_indep, training_dep, all_indep, fnum
     #     pickle.dump(training_dep, f)
     # print("完成pickle")
     merged_ei = []
-    if model_name == "RF11":
+    if model_name == "RF_None":
         estimators = model.estimators_
 
         independent = []
@@ -228,29 +227,23 @@ def run_boca(filename, initial_size, maxlives, budget, fnum, rnum0,model_name="R
     
     fnum = min(max(int(1/2*lens),1),fnum)
     rnum0 = min(2**(lens-fnum-1),rnum0)
-    print("fnum:",fnum)
-    print("rnum0",rnum0)
+    # print("fnum:",fnum)
+    # print("rnum0",rnum0)
     training_dep = [t.objective[-1] for t in file.training_set]
     all_indep = [t.decision for t in file.all_set]
-
     # 初始化最优值
     result = 1e20
-
     for x in training_dep:
         if result > x:
             result = x
-
     results = []
     x_axis = []
     xs = []
-    
-
     training_indep = [t.decision for t in file.training_set]
     training_dep = [t.objective[-1] for t in file.training_set]
     tuple_is = training_indep[:]
-
     best_loop = 1
-    print("进入循环")
+    # print("进入循环")
     while steps+initial_size <= budget:
         # print("len of training independent: ", len(training_indep))
         rnum = rnum0 * \

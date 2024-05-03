@@ -16,7 +16,6 @@ from utils.HINNPerf_model_runner import ModelRunner
 from utils.HINNPerf_models import MLPHierarchicalModel
 from utils.mlp_sparse_model_tf2 import MLPSparseModel
 import torch
-from utils import PerfAL_model
 from torch.autograd import Variable
 import re
 import os
@@ -296,18 +295,18 @@ def read_model(solution,learning_model,bayes_model,dataset,seed=1,step=6):
         result_pred = deepperf_model.predict(solution)[0]
     
 
-    elif learning_model in ["Perf_AL"]:
-        # PATH = "./Pickle_all/PickleLocker_flash_models/Data_small/Apache_AllNumeric/Perf_AL_seed19_step14"
-        with open(save_path+'_features_miny_maxy.p','rb') as d:
-            [N_features,min_Y,max_Y] = pickle.load(d)
-        model = PerfAL_model.MyModel(N_features)
-        model = torch.load(save_path)
-        model.eval()
-        x = np.array(solution,dtype=np.float32)
-        x = Variable(torch.tensor(x))
-        result_pred = model(x).detach().numpy()
-        result_pred = (float(max_Y-min_Y))*result_pred+float(min_Y)
-        result_pred = result_pred[0]
+    # elif learning_model in ["Perf_AL"]:
+    #     # PATH = "./Pickle_all/PickleLocker_flash_models/Data_small/Apache_AllNumeric/Perf_AL_seed19_step14"
+    #     with open(save_path+'_features_miny_maxy.p','rb') as d:
+    #         [N_features,min_Y,max_Y] = pickle.load(d)
+    #     model = PerfAL_model.MyModel(N_features)
+    #     model = torch.load(save_path)
+    #     model.eval()
+    #     x = np.array(solution,dtype=np.float32)
+    #     x = Variable(torch.tensor(x))
+    #     result_pred = model(x).detach().numpy()
+    #     result_pred = (float(max_Y-min_Y))*result_pred+float(min_Y)
+    #     result_pred = result_pred[0]
 
     
     if bayes_model in ['atconf','restune','tuneful','robotune']:
