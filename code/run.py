@@ -1,6 +1,5 @@
-
-from model_free import best_config,GGA,paramILS,GA,ConEx,rd,sampling,E_search
-from moduces import boca,atconf,flash,ottertune,restune,robotune,smac,tuneful
+from batch import best_config,GGA,paramILS,GA,ConEx,rd,sampling,E_search
+from sequential import boca,atconf,flash,ottertune,restune,robotune,smac,tuneful
 import matplotlib.pyplot as plt
 import random
 import torch
@@ -17,7 +16,6 @@ def train_model(train_x,train_y,modelname,filename,seed):
 
 def run_main_free(seed,data,file,modelname,funcname,budget):
     
-
     random.seed(seed)
     np.random.seed(seed)
     torch.manual_seed(seed)
