@@ -4,10 +4,16 @@ This repository contains the data and code for the following paper:
 ## Introduction
 This is a study on model's impact on accuracy...
 
-## Code?
+## Code
 
-- Data_big 
-- model_free
+-- Data_big (Datasets, the target need to start with "$<")
+-- model_free (Batch model-based tuners)
+-- models (Surrogate models)
+-- moduces (Sequential model-based tuners)
+-- util (Util for tuners)
+-- utils (Utils for models)
+-- run (A simple run)
+
 
 ## Detailed reuslts
 Detailed rsults...
