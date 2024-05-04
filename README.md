@@ -7,12 +7,12 @@ This is a study on model's impact on accuracy...
 ## Code
 
 -- Data_big (Datasets, the target need to start with "$<")<br>
--- model_free (Batch model-based tuners) <br>
+-- batch (Batch model-based tuners) <br>
 -- models (Surrogate models)<br>
--- moduces (Sequential model-based tuners)<br>
+-- sequential (Sequential model-based tuners)<br>
 -- util (Util for tuners)<br>
 -- utils (Utils for models)<br>
--- run (A simple run)
+-- run (A simple run on system "7z", the working path is "./model-impact/code")
 
 
 ## Detailed reuslts
@@ -33,7 +33,7 @@ The datasets are originally from
      
 **https://github.com/DeepPerf/DeepPerf**:
    - LLVM
-   - BDB_C
+   - BDBC
    - HSQLDB
    - Polly
    - JavaGC
@@ -63,7 +63,7 @@ The datasets are originally from
 **https://github.com/ai-se/BEETLE**:
    - Storm
 
- Details of the datasets are given in our paper.
+Details of the datasets are given in our paper.
 
 ## Raw results
 
