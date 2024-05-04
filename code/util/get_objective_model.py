@@ -20,12 +20,6 @@ from torch.autograd import Variable
 import re
 import os
 
-
-
-# def get_objective_score_with_model(solution,learning_model,file):
-#     solution = [solution]
-#     save_path = 
-
 def get_path(learning_model,file,bayes_models,seed):
     # print(learning_model,file,bayes_models,seed)
     pattern = re.compile(r'{0}(_\w+)'.format(learning_model)) 
@@ -43,8 +37,6 @@ def get_path(learning_model,file,bayes_models,seed):
                 names_tmp.append(name)
     names = names_tmp
     
-    
-
     def sort_key(filename):
         match = pattern_num.search(filename)
         if match:
@@ -63,8 +55,6 @@ def get_path(learning_model,file,bayes_models,seed):
                     f_names.append(root+name)
             else:    
                 f_names.append(root+name)
-
-
 
     new_strings = [re.sub(r'(step\d+)_\w+.p', r'\1', s) for s in f_names]
     new_strings = [re.sub(r'(step\d+)+.p', r'\1', s) for s in new_strings]
@@ -95,8 +85,6 @@ def get_objective_score_with_model(solution,learning_model,file):
         if match:
             f_names.append(root+name)
 
-
-
     new_strings = [re.sub(r'(step\d+)_\w+.p', r'\1', s) for s in f_names]
     new_strings = [re.sub(r'(step\d+)+.p', r'\1', s) for s in new_strings]
     f_names = list(set(new_strings))
@@ -105,8 +93,6 @@ def get_objective_score_with_model(solution,learning_model,file):
     save_path = f_names[4]
 
     return read_model_free(solution,learning_model,save_path)[0]
-
-
 
 
 def read_model_free(solution,learning_model,save_path):
@@ -184,20 +170,6 @@ def read_model_free(solution,learning_model,save_path):
         deepperf_model.train(np.array(X_train), np.array(Y_train), lr_opt)
         result_pred = deepperf_model.predict(solution)[0]
     
-
-    elif learning_model in ["Perf_AL"]:
-        # PATH = "./Pickle_all/PickleLocker_flash_models/Data_small/Apache_AllNumeric/Perf_AL_seed19_step14"
-        with open(save_path+'_features_miny_maxy.p','rb') as d:
-            [N_features,min_Y,max_Y] = pickle.load(d)
-        model = PerfAL_model.MyModel(N_features)
-        model = torch.load(save_path)
-        model.eval()
-        x = np.array(solution,dtype=np.float32)
-        x = Variable(torch.tensor(x))
-        result_pred = model(x).detach().numpy()
-        result_pred = (float(max_Y-min_Y))*result_pred+float(min_Y)
-        result_pred = result_pred[0]
-
     return result_pred
 
 
@@ -293,20 +265,6 @@ def read_model(solution,learning_model,bayes_model,dataset,seed=1,step=6):
         # print(np.array(X_train), np.array(Y_train), lr_opt)
         deepperf_model.train(np.array(X_train), np.array(Y_train), lr_opt)
         result_pred = deepperf_model.predict(solution)[0]
-    
-
-    # elif learning_model in ["Perf_AL"]:
-    #     # PATH = "./Pickle_all/PickleLocker_flash_models/Data_small/Apache_AllNumeric/Perf_AL_seed19_step14"
-    #     with open(save_path+'_features_miny_maxy.p','rb') as d:
-    #         [N_features,min_Y,max_Y] = pickle.load(d)
-    #     model = PerfAL_model.MyModel(N_features)
-    #     model = torch.load(save_path)
-    #     model.eval()
-    #     x = np.array(solution,dtype=np.float32)
-    #     x = Variable(torch.tensor(x))
-    #     result_pred = model(x).detach().numpy()
-    #     result_pred = (float(max_Y-min_Y))*result_pred+float(min_Y)
-    #     result_pred = result_pred[0]
 
     
     if bayes_model in ['atconf','restune','tuneful','robotune']:

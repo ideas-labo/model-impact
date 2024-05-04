@@ -79,8 +79,6 @@ class bagging():
                     model = make_pipeline(StandardScaler(), SGDRegressor(max_iter=1000, tol=1e-3))
                     # model = SGDRegressor(max_iter=1000, random_state=self.seed)
 
-
-
                 if i == estimators_num:
                     try:
                         model.fit(self.train_x,self.train_y)
@@ -180,38 +178,6 @@ class bagging():
                     model, config = HINNPerf.HINNPerf(bagging_x,bagging_y,self.file_name)
                     self.models.append(model)
                     self.best_configs.append(config)
-            
-            elif self.learning_model == "Perf_AL":
-                def dimensions(lst):
-                    if not isinstance(lst, list):
-                        return 0    # 非列表返回0维
-                    if not lst:
-                        return 1    # 空列表返回1维 
-                    return 1 + dimensions(lst[0]) # 递归调用
-                self.max_Y = max(self.train_y)
-                self.min_Y = min(self.train_y)
-                
-                if dimensions(self.max_Y) == 1:
-                    self.max_Y=self.max_Y[0]
-                    self.min_Y=self.min_Y[0]
-                # print(self.max_Y)
-                for i in range(estimators_num+1):
-                    if i == estimators_num:
-                        self.full_model,self.AL_features = Perf_AL.Perf_AL(self.train_x,self.train_y,self.file_name,self.seed)
-                        break
-                    np.random.seed(self.seed * i)
-                    bagging_index = np.random.choice(lens,lens,replace=True)
-                    if len(set(bagging_index)) == 1:
-                        bagging_index = np.random.choice(lens,lens-1,replace=False)
-                    bagging_x = [self.train_x[j] for j in bagging_index]
-                    bagging_y = [self.train_y[j] for j in bagging_index]
-                    model,_= Perf_AL.Perf_AL(bagging_x,bagging_y,self.file_name,self.seed)
-                    self.models.append(model)
-            # print(bagging_index)
-        
-
-
-
 
     def predict(self, x,estimators_num = 6,return_std=True):
         if self.learning_model in ["RF","LR","KNN","SVR","KRR",'SPLConqueror',"DECART","DeepPerf"]:
@@ -289,24 +255,7 @@ class bagging():
                 result_pred = self.full_model.predict(x,self.full_config) # runner对象不一样
                 # print(result_pred)
                 # print(result_pred,"---",x)
-            
-            if self.learning_model == "Perf_AL":
-                
-                pred = []
-                x = np.array(x,dtype=np.float32)
-                x = Variable(torch.tensor(x))
-                if self.funcname != "flash":
-                    for i in range(estimators_num):
-                        # print(self.models[i](x))
-                        bagging_pred = self.models[i](x).detach().numpy()
-                        bagging_pred = (float(self.max_Y-self.min_Y))*bagging_pred+float(self.min_Y)
-                        pred.append(bagging_pred[0])
-
-                result_pred = self.full_model(x).detach().numpy()
-                result_pred = (float(self.max_Y-self.min_Y))*result_pred+float(self.min_Y)
-
-
-        
+                  
         if self.learning_model == "GP":
             result_pred,result_std = self.full_model.predict(x, return_std=True)
             return result_pred, result_std
