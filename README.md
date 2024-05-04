@@ -6,6 +6,9 @@ This is a study on model's impact on accuracy...
 
 ## Code?
 
+- Data_big 
+- model_free
+
 ## Detailed reuslts
 Detailed rsults...
 
@@ -58,7 +61,6 @@ The datasets are originally from
 
 ## Raw results
 
-ss
 Raw data
 The experiment data reported in the work can be found at: https://xxx/xxx. The naming rule follow as []-[], e.g.
 
