@@ -67,8 +67,7 @@ Details of the datasets are given in our paper.
 
 ## Raw results
 
-Raw data
-The experiment data reported in the work can be found at: https://xxx/xxx. The naming rule follow as []-[], e.g.
+The experiment data reported in the work can be found at: https://xxx/xxx. The naming rule follow as PickleLocker_[tuner]_[models/results]/[Data_big/Data_small]/[Data_name]/[Model_name], e.g. PickleLocker_atconf_results\Data_big\7z\RF_seed101.csv
 
 ## Supplementary
 supplementary.pdf contains the specific best and worst models in this study.
