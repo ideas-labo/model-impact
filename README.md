@@ -6,18 +6,12 @@ This is a study on model's impact on accuracy...
 
 ## Code
 
--- Data_big (Datasets, the target need to start with "$<")
-
--- model_free (Batch model-based tuners)
-
--- models (Surrogate models)
-
--- moduces (Sequential model-based tuners)
-
--- util (Util for tuners)
-
--- utils (Utils for models)
-
+-- Data_big (Datasets, the target need to start with "$<")<br>
+-- model_free (Batch model-based tuners) <br>
+-- models (Surrogate models)<br>
+-- moduces (Sequential model-based tuners)<br>
+-- util (Util for tuners)<br>
+-- utils (Utils for models)<br>
 -- run (A simple run)
 
 
