@@ -68,7 +68,8 @@ Details of the datasets are given in our paper.
 ## Raw results
 
 The experiment data reported in the work can be found at: https://xxx/xxx. <br>
-The naming rule follow as PickleLocker_[tuner]_[models\results]/[Data_big\Data_small]/[Data_name_[seed+num]\Model_name_[seed+num]_[step+num]].  <br>
+The naming rule follow as: <br>
+PickleLocker_[tuner]_[models\results]/[Data_big\Data_small]/[Data_name_[seed+num]\Model_name_[seed+num]_[step+num]].  <br>
 - e.g. Result: "./PickleLocker_atconf_results/Data_big/7z/RF_seed101.csv"; 
 - e.g. Model: "./PickleLocker_atconf_models/Data_big/7z/GP_seed101_step60.p"
 
