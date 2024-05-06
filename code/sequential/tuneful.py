@@ -23,7 +23,6 @@ from scipy.stats import norm
 
 # ReplayMemory的主要功能是提供一个接口，使得simulation模块可以从中随机采样一批历史数据，用于训练机器学习模型
 
-
 class ReplayMemory(object):
 
     def __init__(self):
@@ -114,9 +113,9 @@ def get_sig_params (header , features , target , fraction):
     header = np.array (header) 
     indices = sig_conf_all_iterations.argsort()[-n_params:][::-1] # select the params that have the most occurances in the sig params over all the interations
     indices = np.array (indices)
-    print (">>>>>>>>>>>>" , indices)
+    # print (">>>>>>>>>>>>" , indices)
     h_inf_params = header[indices] 
-    print (">>>>>>>>>" , h_inf_params)
+    # print (">>>>>>>>>" , h_inf_params)
     search_time += (int(time.time())- start_time)
     return  h_inf_params.tolist() 
 
