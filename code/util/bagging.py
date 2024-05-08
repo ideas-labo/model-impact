@@ -1,6 +1,5 @@
 
 from sklearn.preprocessing import StandardScaler,MinMaxScaler
-import numpy as np
 from sklearn.ensemble import RandomForestRegressor
 from sklearn.linear_model import SGDRegressor, LinearRegression
 from sklearn.gaussian_process import GaussianProcessRegressor
@@ -14,6 +13,7 @@ from torch.autograd import Variable
 import torch
 import copy
 import pickle
+import numpy as np
 from models import DaL, DECART, DeepPerf, HINNPerf, DaL_RF
 from sklearn.pipeline import make_pipeline
 import tensorflow.compat.v1 as tf
@@ -179,7 +179,7 @@ class bagging():
                     self.models.append(model)
                     self.best_configs.append(config)
 
-    def predict(self, x,estimators_num = 6,return_std=True):
+    def predict(self, x,estimators_num = 10,return_std=True):
         if self.learning_model in ["RF","LR","KNN","SVR","KRR",'SPLConqueror',"DECART","DeepPerf"]:
             pred = []
             if self.funcname != "flash":
