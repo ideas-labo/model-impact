@@ -3,13 +3,14 @@
 This repository contains the data and code for the following paper: 
 > Accuracy can Lie: On the Impact of Surrogate Model in Configuration Tuning
 
-## Table of content
+##  1. <a name='Tableofcontent'></a>Table of content
 <!-- vscode-markdown-toc -->
-1. [Introduction](#Introduction)
-2. [Code and quick start](#Code and quick start)
-3. [Datasets](#Datasets)
-4. [Raw experiments results](#Rawexperimentsresults)
-5. [Supplementary](#Supplementary)
+* 1. [Table of content](#Tableofcontent)
+* 2. [Introduction](#Introduction)
+* 3. [Code and quick start](#Codeandquickstart)
+* 4. [Datasets](#Datasets)
+* 5. [Raw experiments results](#Rawexperimentsresults)
+* 6. [Supplementary](#Supplementary)
 
 <!-- vscode-markdown-toc-config
 	numbering=true
@@ -17,10 +18,10 @@ This repository contains the data and code for the following paper:
 	/vscode-markdown-toc-config -->
 <!-- /vscode-markdown-toc -->
 
-##  1. <a name='Introduction'></a>Introduction
+##  2. <a name='Introduction'></a>Introduction
 To ease the expensive measurements during configuration tuning, it is natural to build a surrogate model as the replacement of the system and thereby the configuration performance can be cheaply evaluated. Yet, a stereotype therein is that the higher the model accuracy, the better the tuning result would be, or vice versa. This 'accuracy is all' belief drives our research community to build more and more accurate models and criticize a tuner due to the inaccuracy of the model it uses. However, this practice raises some previously unaddressed questions, e.g., whether the model and its accuracy are really that important for the tuning result? Do those somewhat small accuracy improvements reported (e.g., a few \% error reduction) in existing work really matter much to the tuners? What role does model accuracy play in the impact of tuning quality? To answer those related questions, in this paper, we conduct one of the largest-scale empirical studies to date---running over the period of 13 months $24\times7$---that covers 10 models, 17 tuners, and 29 systems from the existing works while under four different commonly used metrics, leading to ? cases of investigation. Surprisingly, our key findings reveal that the accuracy can lie: there are a considerable number of cases where higher accuracy actually leads to no improvement in the tuning outcomes, or even worse, it can degrade the tuning quality. We also discover that the chosen models in most proposed tuners are sub-optimal and that the required \% of accuracy change to significantly improve tuning quality varies according to the range of model accuracy. From those, we provide in-depth discussions of the rationale behind and offer several lessons learned as well as insights for future opportunities. Most importantly, this work poses a clear message to the community that we should take one step back from the natural 'accuracy is all' belief for model-based configuration tuning.
 
-##  2. <a name='Code and quick start'></a>Code and quick start
+##  3. <a name='Codeandquickstart'></a>Code and quick start
 * code <br>
    -- Data (Datasets, the target need to start with "$<")<br>
    -- batch (Batch model-based tuners) <br>
@@ -43,7 +44,7 @@ python3 run.py
 ```
 
 
-##  3. <a name='Datasets'></a>Datasets
+##  4. <a name='Datasets'></a>Datasets
 The datasets are originally from 
 
 **https://zenodo.org/records/7544891#.ZDQzsMLMLN8**:
@@ -90,7 +91,7 @@ The datasets are originally from
 
 Thanks for their efforts. Details of the datasets are given in our paper.
 
-##  4. <a name='Rawexperimentsresults'></a>Raw experiments results
+##  5. <a name='Rawexperimentsresults'></a>Raw experiments results
 
 The experiment data reported in the work can be found at: https://xxx/xxx. The naming rule follow as: <br>
 
@@ -102,5 +103,5 @@ The experiment data reported in the work can be found at: https://xxx/xxx. The n
 - e.g. "./PickleLocker_atconf_models/Data_big/7z/GP_seed101_step20.p"<br>
 
 
-##  5. <a name='Supplementary'></a>Supplementary
+##  6. <a name='Supplementary'></a>Supplementary
 "supplementary.pdf" contains the specific best and worst models in this study.
