@@ -17,13 +17,13 @@ To ease the expensive measurements during configuration tuning, it is natural to
 -- run (A simple run on system "7z", the working path is "./model-impact/code")
 
 To run the code, cd "./model-impact/code" as working path and install the essential requirements: 
-'''
+```
 pip install -r requirements.txt,  
-'''
+```
 And you can run below code to have a quick start:
-'''
+```
 python3 run.py
-'''
+```
 
 
 ## Detailed reuslts
