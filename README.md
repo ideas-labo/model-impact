@@ -22,7 +22,7 @@ To ease the expensive measurements during configuration tuning, it is natural to
 
 ##  2. <a name='Code'></a>Code
 * code <br>
-   -- Data_big (Datasets, the target need to start with "$<")<br>
+   -- Data (Datasets, the target need to start with "$<")<br>
    -- batch (Batch model-based tuners) <br>
    -- models (Surrogate models)<br>
    -- sequential (Sequential model-based tuners)<br>
