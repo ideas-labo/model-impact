@@ -60,7 +60,7 @@ def run_main_free(seed,data,file,modelname,funcname,budget):
     else:
         return "ERROR!!"
 
-    x_axis = range(len(result)+1)[1:]  # 创建索引
+    x_axis = range(len(result)+1)[1:]  
     f = open('./Pickle_all/PickleLocker_'+str(funcname)+'_results'+ '/'+str(filename)[:-4] +'/'+str(modelname)+'_'+'seed'+str(seed)+'.csv','w',newline="")
     csv_writer = csv.writer(f)                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                          
     csv_writer.writerow(x_axis)
@@ -75,6 +75,7 @@ if __name__ == '__main__':
     # modelname = "real"
     mp.freeze_support()
     pool = mp.Pool(processes=10)
+    data = 'Data'
     modelnames = ["DT","RF","LR","SVR","GP","SPLConqueror","DECART","DeepPerf","HINNPerf","DaL_RF"]
     funcnames = ["boca","atconf","flash","ottertune","restune","robotune","smac","tuneful"]
     # add other system data (maximun need change requre func, > and <, and initial parameter)
@@ -83,13 +84,6 @@ if __name__ == '__main__':
     for num in range(len(files)):
         budget = budgets[num]
         file = files[num]
-        if file in ['7z.csv','Apache.csv','dconvert.csv','deeparch.csv','exastencils.csv','Hadoop.csv','hipacc.csv','hsmgp.csv','javagc.csv','jump3r.csv',
-    'kanzi.csv','MariaDB.csv','MongoDB.csv','polly.csv','PostgreSQL.csv','redis.csv','SaC.csv','spark.csv','SQL.csv','storm.csv',
-    'tomcat.csv','vp9.csv','xgboost.csv','BDBC_AllNumeric.csv','brotli.csv','HSQLDB.csv','LLVM_AllNumeric.csv','lrzip.csv','noc-CM-log.csv',
-            'sort-256.csv','wc-c4-3d.csv']:
-            data = 'Data_big'
-        else:
-            data = 'Data_small'
         for seed in seeds:
             for model_name in modelnames:
                 for funcname in funcnames:  
