@@ -88,17 +88,17 @@ The datasets are originally from
 **https://github.com/ai-se/BEETLE**:
    - Storm
 
-Details of the datasets are given in our paper.
+Thanks for their efforts. Details of the datasets are given in our paper.
 
 ##  4. <a name='Rawexperimentsresults'></a>Raw experiments results
 
 The experiment data reported in the work can be found at: https://xxx/xxx. The naming rule follow as: <br>
 
 
-*Result*: "PickleLocker\_[tuner]\_results/Data\_[big\small]/[Data]/[model]\_[seed+num].csv"  <br>
+*Result*: "PickleLocker\_[tuner]\_results/Data\_[big\small]/[Data_name]/[model_name]\_[seed_num].csv"  <br>
 - e.g. "./PickleLocker_atconf_results/Data_big/7z/RF_seed101.csv"<br>
 
-*Model*: "PickleLocker\_[tuner]\_results/Data\_[big\small]/[Data]/[model]\_[seed+num]\_[step+num].p"  <br>
+*Model*: "PickleLocker\_[tuner]\_results/Data\_[big\small]/[Data_name]/[model_name]\_[seed_num]\_[step_num].p"  <br>
 - e.g. "./PickleLocker_atconf_models/Data_big/7z/GP_seed101_step20.p"<br>
 
 
