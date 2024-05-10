@@ -5,12 +5,12 @@ This repository contains the data and code for the following paper:
 
 ##  1. <a name='Tableofcontent'></a>Table of content
 <!-- vscode-markdown-toc -->
-* 1. [Table of content](#Tableofcontent)
-* 2. [Introduction](#Introduction)
-* 3. [Code and quick start](#Codeandquickstart)
-* 4. [Datasets](#Datasets)
-* 5. [Raw experiments results](#Rawexperimentsresults)
-* 6. [Supplementary](#Supplementary)
+1. [Table of content](#Tableofcontent)
+2. [Introduction](#Introduction)
+3. [Code and quick start](#Codeandquickstart)
+4. [Datasets](#Datasets)
+5. [Raw experiments results](#Rawexperimentsresults)
+6. [Supplementary](#Supplementary)
 
 <!-- vscode-markdown-toc-config
 	numbering=true
