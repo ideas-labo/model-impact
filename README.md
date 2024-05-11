@@ -93,7 +93,7 @@ Thanks for their efforts. Details of the datasets are given in our paper.
 
 ##  5. <a name='Rawexperimentsresults'></a>Raw experiments results
 
-The experiment data reported in the work can be found at: https://xxx/xxx. The naming rule follow as: <br>
+The experiment data reported in the work can be found at: [https://zenodo.org/records/11172102](Detailed_data). The naming rule follow as: <br>
 
 
 *Result*: `PickleLocker\_[tune]\_results/[Data_big\small]/[Data]/[model]\_[seed_num].csv`  <br>
