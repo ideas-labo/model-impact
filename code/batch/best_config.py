@@ -1,12 +1,12 @@
-## bestconfig使用分割循环查找
+## bestconfig
 
 import pandas as pd
 import numpy as np
+import random
 from doepy import build
 from random import shuffle
 from sklearn.preprocessing import StandardScaler,MinMaxScaler
 from util.get_objective_model import get_path
-import random
 from util.read_model import read_model_class
 
 class solution_holder:
@@ -24,12 +24,10 @@ class file_data:
         self.training_set = training_set
         self.testing_set = testing_set
         self.all_set = all_set
-        self.independent_set = independent_set  # 自变量的值
+        self.independent_set = independent_set  
         self.features = features
         self.dict_search = dict_search
 
-# 得到数据
-# 返回：file_data
 
 def get_data(filename, initial_size=5):
     """
@@ -38,18 +36,15 @@ def get_data(filename, initial_size=5):
     :return: file
     """
     pdcontent = pd.read_csv(filename)
-    indepcolumns = [col for col in pdcontent.columns if "$<" not in col]  # 自变量
-    depcolumns = [col for col in pdcontent.columns if "$<" in col]        # 因变量
+    indepcolumns = [col for col in pdcontent.columns if "$<" not in col]  
+    depcolumns = [col for col in pdcontent.columns if "$<" in col]        
 
-    # 对自变量列进行排序和去重
     tmp_sortindepcolumns = []
     for i in range(len(indepcolumns)):
         tmp_sortindepcolumns.append(sorted(list(set(pdcontent[indepcolumns[i]]))))
-    print("去重排序：", tmp_sortindepcolumns)
-
-    sortpdcontent = pdcontent.sort_values(by=depcolumns[-1])  # 按目标从小到大排序
+    # print("去重排序：", tmp_sortindepcolumns)
+    sortpdcontent = pdcontent.sort_values(by=depcolumns[-1]) 
     ranks = {}
-    # 目标转化为list再去重，再排序
     for i, item in enumerate(sorted(set(sortpdcontent[depcolumns[-1]].tolist()))):
         ranks[item] = i
 
@@ -98,20 +93,13 @@ def get_objective_score_similarly(best_solution,dict_search,model_name):
             raise GotoFailedLabelException
         return tmp_result
     else:
-        
         if model_predict == 0:
             save_path = get_path(learning_model=model_name,file=file_name,bayes_models="None",seed=seed1)
             model_predict = read_model_class(model_name,save_path,"None")
-            # print(best_solution)
             tmp_result = model_predict.predict(best_solution)
-            # print("cao",model_predict.predict([0,1,0,0,1,3,0.6,23,3,40,0,4,250,23,40,0,1.4]))
-            # print("cao",model_predict.predict([0,0,0,0,14,8,1,31,8,161,90,85,877,3.37E+14,14,1042,6]))
-            # print(tmp_result)
         else:
             tmp_result = model_predict.predict(best_solution)
 
-            
-        
         if min(tmp_results)>tmp_result:
             lives = max_lives
         else:
@@ -158,9 +146,6 @@ def distance(p1,p2):
     return dist_orig
 
 def Latin_sample(file, bounds, num_samples = 20):
-    # filename = "./Data/Dune.csv"
-    # file = get_data(filename)
-    # header, features, target = load_features(file)
 
     def round_num(num, discrete_list):
         max_num = 1e20
@@ -173,7 +158,6 @@ def Latin_sample(file, bounds, num_samples = 20):
 
     variables = {}
 
-    # 当数据中存在只有一个的set需要进行该操作
     while [0.0] in bounds:
         bounds = [[0.0,1.0] if i == [0.0] else i for i in bounds]
     while [1.0] in bounds:
@@ -181,21 +165,16 @@ def Latin_sample(file, bounds, num_samples = 20):
     for i in range(len(file.independent_set)):
         variables[file.features[i]] = bounds[i]
     sample = build.space_filling_lhs(variables, num_samples)
-
     data_array = np.array(sample)
-    # 然后转化为list形式
-
     data_list = data_array.tolist()
-
     copy = data_list.copy()
-
     for i in range(len(data_list)):
         for j in range(len(data_list[i])):
             data_list[i][j] = round_num(data_list[i][j],file.independent_set[j])
 
     return data_list
 
-# 生成bound边界
+
 def make_bound(sample, best_now):
     bound = []
     # print(sample)
@@ -205,12 +184,6 @@ def make_bound(sample, best_now):
         min_bound = -1
         max_bound = -1
         for j in range(len(sample)):
-            # if best_now[i] == 0.0:
-            #     min_bound = 0.0
-            #     max_bound = 1.0
-            # if best_now[i] == 1.0:
-            #     max_bound = 1.0
-            #     min_bound = 0.0
             if sample[j][i] - best_now[i] > 0 and sample[j][i] - best_now[i] < max_tmp:
                 max_tmp = sample[j][i] - best_now[i]
                 max_bound = sample[j][i]
@@ -223,8 +196,6 @@ def make_bound(sample, best_now):
             max_bound = best_now[i]
         if min_bound == max_bound:
             min_bound,max_bound = 0.0,1.0
-        # print([min_bound,max_bound])
-        # print(best_now)
         bound.append([min_bound, max_bound])
     return bound
             
@@ -239,9 +210,6 @@ def search(sample,file,model_name):
             best_score = tmp_score
             best_result = sample[i]
     return best_result,best_score
-
-# 总次数：总的times*number
-# 要保证每个loop够大在，再保证轮数多一点，避免陷入局部最优
 
 def run_best_config(filename,model_name="GP",seed=1,maxlives=100,budget=100):
     global flag,xs,x_result,max_lives,lives,file_name,model_predict,tmp_results,seed1,budget1

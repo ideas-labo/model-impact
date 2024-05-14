@@ -1,16 +1,8 @@
-##  使用的GPR + EI ，GPR使用的botorch中的GPR模型，但是EI是自己写的，因为
-##  GPR中的优化是连续的优化，不知道如何使用离散点
-##  算出结构好像较慢，因为搜索的所有点
-##  The GP modeling stops after suggesting a minimum of n samples (e.g., 10 samples) and then after the expected improvement
-##  (EI) drops below 10%
-##  原文多次使用0.6的特征筛选，但是数据集特征不够
 
 import pickle
 from sklearn.gaussian_process import GaussianProcessRegressor
 from sklearn.preprocessing import StandardScaler,MinMaxScaler
 from sklearn.ensemble import ExtraTreesRegressor
-# import os
-# import sys
 import matplotlib.pyplot as plt
 import numpy as np
 from math import sqrt
@@ -21,7 +13,6 @@ from util.bagging import bagging
 from scipy.optimize import minimize
 from scipy.stats import norm
 
-# ReplayMemory的主要功能是提供一个接口，使得simulation模块可以从中随机采样一批历史数据，用于训练机器学习模型
 
 class ReplayMemory(object):
 
@@ -73,7 +64,6 @@ def get_ei(m, s, eta):
 
     return f
 
-
 def scale_data(data):
     from sklearn.preprocessing import MinMaxScaler
     scaler = MinMaxScaler ()
@@ -119,18 +109,14 @@ def get_sig_params (header , features , target , fraction):
     search_time += (int(time.time())- start_time)
     return  h_inf_params.tolist() 
 
-# 传入：特征和文件
-# 直接修改文件的内容
 def clean_data(important_features,file):
     unimportant_features = []
     for i in file.features:
         if i not in important_features:
             unimportant_features.append(i)
-    feature_sort = {x:i for i, x in enumerate(file.features)}  # 特征:特征编号
-    # 转置
+    feature_sort = {x:i for i, x in enumerate(file.features)}  
     features = [t.decision for t in file.all_set]
     feature_count = list(map(list, zip(*features)))
-    # 得到出现最多的数
     feature_dict = {}
     for f in unimportant_features:
         tmp = feature_count[feature_sort[f]]
@@ -139,14 +125,12 @@ def clean_data(important_features,file):
     # print(feature_dict.keys())
     # print(feature_dict.values())
 
-    # 把file里面的元素删了
     for i in [file.all_set,file.training_set,file.testing_set]:
         for feature in unimportant_features:
             for j in i:
                 if j.decision[feature_sort[feature]] != feature_dict[feature]:
                     i.remove(j)
     
-    # 修改去重的自变量
     for feature in unimportant_features:
         file.independent_set[feature_sort[feature]] = [feature_dict[feature]]
     # print(file.independent_set)
@@ -161,10 +145,8 @@ def reset_data(file,initial_size):
     file.testing_set = [file.all_set[i] for i in test_indexes]
     return file
 
-
 def ac(x, model, y_min, xi=0):
     mean, std = model.predict(x, return_std=True)
-    # print(std)
     z = (-mean +y_min - xi)/std
     return (-mean + y_min - xi) * norm.cdf(z) + std * norm.pdf(z)
 
@@ -174,7 +156,7 @@ def run_gpr_ei(initial_size, file, filename, budget=10,model_name="GP",seed=0,ma
     x_axis = []
     xs = []
     memory = ReplayMemory()
-    num_collections = initial_size  # 多少个已知量
+    num_collections = initial_size  
     header,_ ,_= read_file.load_features(file)
     lens = len(header)
     best_result = 1e20
@@ -186,13 +168,11 @@ def run_gpr_ei(initial_size, file, filename, budget=10,model_name="GP",seed=0,ma
         reward = action.objective[-1]
         memory.push(np.array(action.decision), np.array([reward]))
         tuple_is.append(list(action.decision))
-    # 主循环  
     pbounds = {}
     for name in range(lens):
         pbounds[name] = (0, 1)
     bounds = np.array(list(pbounds.values()), dtype=np.float64)
     # best_ei = 0
-  
     global_step=0
     test_sequence = file.testing_set
     test_sequence = [i.decision for i in test_sequence]
@@ -249,23 +229,7 @@ def run_gpr_ei(initial_size, file, filename, budget=10,model_name="GP",seed=0,ma
             if max_acq is None or -res.fun >= max_acq:
                 x_max = res.x
                 max_acq = -res.fun
-                # print(res.fun)
-        #     tmp = (res.x,-res.fun)
-        #     tmps.append(tmp)
-        #     tmps.append((x_try,-ac(x_try.reshape(1,-1),model=model,y_min=best_f)))
-        # sort_merged_ei = sorted(tmps, key=lambda x: x[1], reverse=True)
-        # # print(sort_merged_ei)
-        # for i,j in sort_merged_ei:
-        #     scaler_i = Scaler_x.inverse_transform([i])
-        #     origin_i = get_similar_x(file.dict_search,scaler_i[0])
-        #     # print(xs)
-        #     if origin_i not in xs and origin_i not in actions:
-        #         x_max = i
-        #         break
-        # print("The best ei is: ",max_acq)
-        
-        # print(new_x)
-        # x_max = np.clip(x_max, bounds[:, 0], bounds[:, 1])
+
         x_max = list(x_max)
         for i in range(len(x_max)):
             x_max[i] = (max(file.independent_set[i])-min(file.independent_set[i]))*x_max[i] + min(file.independent_set[i])
@@ -294,15 +258,12 @@ def run_gpr_ei(initial_size, file, filename, budget=10,model_name="GP",seed=0,ma
 def run_tuneful(initial_size ,filename , model_name="GP",fraction_ratio=0.9,budget=20,seed=0,maxlives=100):
     # filename = "./Data/Dune.csv"
     file_data = read_file.get_data(filename, initial_size)
-    
     header, features, target = read_file.load_features(file_data)
     features = features[:100]
     target = target[0:100]
     important_features = get_sig_params(header, features, target, fraction=fraction_ratio)
     file_data = clean_data(important_features, file_data)
     file_data = reset_data(file_data, initial_size)
-
     xs,results, x_axis, best_result,best_loop, used_budget = run_gpr_ei(initial_size, file_data,filename, budget,model_name,seed=seed,maxlives=maxlives)
-
     return np.array(xs), np.array(results), np.array(x_axis), best_result, best_loop, used_budget
 

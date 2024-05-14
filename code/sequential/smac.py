@@ -11,7 +11,7 @@ from util import read_file
 from util.bagging import bagging
 
 def Result(configuration,model,eta,model_name):
-    if model_name=="RF11":
+    if model_name=="RF__":
         estimators = model.estimators_
         pred = []
         for e in estimators:
@@ -23,21 +23,16 @@ def Result(configuration,model,eta,model_name):
         value = ei(value_pred,value_sigma,eta)
         # print("VALUE: ",value)
         return value
+    
 def fixed_interval_sample(lst, n, keep_ends=True):
-    # 计算间隔
     interval = (len(lst) / (n-1))  
-    # print(interval)
-    # 抽样索引
     indices = [0] + [int(i*interval) for i in range(1, n-1)]
-    # print(indices)
     if keep_ends:
         indices.append(-1)
-    
-    # 抽样并保留原序    
+       
     sampled = [lst[i] for i in indices]
     
     return sampled
-
 
 def find_neighbourhood(configuration,file):
     res = []
@@ -74,7 +69,6 @@ def model_randomforest(train_independent, train_dependent):
 
     return model
 
-# 得到EI：用于acquire function
 def get_ei(pred, eta):
     pred = np.array(pred).transpose(1, 0)
     m = np.mean(pred, axis=1)
@@ -105,8 +99,7 @@ def ei(m,s,eta):
         f = calculate_f()
     return f
 
-
-def get_training_sequence_by_BOCA(training_indep, training_dep, all_indep,eta,file,model_name,filename,seed,step):
+def get_training_sequence_by_smac(training_indep, training_dep, all_indep,eta,file,model_name,filename,seed,step):
     if model_name == "RF_skip":
         model = model_randomforest(training_indep, training_dep)
     else:
@@ -120,22 +113,19 @@ def get_training_sequence_by_BOCA(training_indep, training_dep, all_indep,eta,fi
     # print(eis)
     ######## 替换模型修改这里 ############# 
     
-    
+
     sort_merged_ei = sorted(eis, key=lambda x: x[1], reverse=True)[:10]
     top_10 = [i[0] for i in sort_merged_ei]
-    # inc_best10 = []
-    inc_random10000 = random.sample(all_indep,1000 if len(all_indep)>1000 else len(all_indep))### 原文选择10000
+
+    inc_random10000 = random.sample(all_indep,1000 if len(all_indep)>1000 else len(all_indep))
     for i in top_10:
-        # inc_best10.append(iterative_first_improvement(i,model,eta,file))
         inc_random10000.append(iterative_first_improvement(i,model,eta,file,model_name))
     
-    # print(len(inc_random10000))
+
     return inc_random10000, model
 
-# 返回：下一个抽样点
-
-def get_best_configuration_id_BOCA(training_indep, training_dep, all_indep, eta,file,model_name,filename,seed,step):
-    test_sequence, model = get_training_sequence_by_BOCA(training_indep, training_dep, all_indep,eta,file,model_name,filename,seed,step)
+def get_best_configuration_id_smac(training_indep, training_dep, all_indep, eta,file,model_name,filename,seed,step):
+    test_sequence, model = get_training_sequence_by_smac(training_indep, training_dep, all_indep,eta,file,model_name,filename,seed,step)
     merged_ei = []
     if model_name == "RF11":
 
@@ -153,8 +143,6 @@ def get_best_configuration_id_BOCA(training_indep, training_dep, all_indep, eta,
             pickle.dump(model, f)  # 修改
             f.close()
     else:
-        # model = bagging(training_indep,training_dep,learning_model=model_name,file_name=filename,seed=seed,step=step,funcname="smac")
-        # model.bagging_fit()
         model.save_model()
         for i in range(len(test_sequence)):
             pred = []
@@ -166,30 +154,15 @@ def get_best_configuration_id_BOCA(training_indep, training_dep, all_indep, eta,
         
     sort_merged_ei = sorted(merged_ei, key=lambda x: x[1], reverse=True)
     x_max = sort_merged_ei[0][0]
-    # x_max = None
-    # for i,j in sort_merged_ei:
-    #     if i not in training_indep:
-    #         x_max = i
-    #         break
-    # if x_max == None:
-    #     x_max = sort_merged_ei[0][0]
-        
 
-    
     return(x_max)
 
-            
-# 返回：对应decision的object，和decision（格式化之后）
 def run_smac(filename, model_name="RF",initial_size=10, maxlives=100, budget=30,seed=0):
-    
     steps = 0
     lives = maxlives
-
     file = read_file.get_data(filename, initial_size)
     training_dep = [t.objective[-1] for t in file.training_set]
     all_indep = [t.decision for t in file.all_set]
-
-    # 初始化最优值
     result = 1e20
     for x in training_dep:
         if result > x:
@@ -204,7 +177,7 @@ def run_smac(filename, model_name="RF",initial_size=10, maxlives=100, budget=30,
     while initial_size + steps <= budget:
         steps += 1
         # print("len of training independent: ", len(training_indep))
-        best_solution = get_best_configuration_id_BOCA(
+        best_solution = get_best_configuration_id_smac(
             training_indep, training_dep, all_indep, result, file,model_name,filename,seed,steps)
         best_result,tuple_i = get_objective.get_objective_score_with_similarity(
             file.dict_search, best_solution)
@@ -228,4 +201,3 @@ def run_smac(filename, model_name="RF",initial_size=10, maxlives=100, budget=30,
         if lives == 0:
             break
     return np.array(xs), np.array(results), np.array(x_axis), result, best_loop, len(tuple_is)
-

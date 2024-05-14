@@ -1,10 +1,6 @@
 import pandas as pd
 import numpy as np
-from sklearn.preprocessing import MinMaxScaler
-from random import shuffle
 import random
-import math
-from util.get_objective_model import get_objective_score_with_model
 from util.read_model import read_model_class
 from util.get_objective_model import get_path
 from scipy import spatial
@@ -23,12 +19,10 @@ class file_data:
         self.training_set = training_set
         self.testing_set = testing_set
         self.all_set = all_set
-        self.independent_set = independent_set  # 自变量的值
+        self.independent_set = independent_set 
         self.features = features
         self.dict_search = dict_search
 
-# 得到数据
-# 返回：file_data
 
 def get_data(filename, initial_size=5):
     """
@@ -37,18 +31,16 @@ def get_data(filename, initial_size=5):
     :return: file
     """
     pdcontent = pd.read_csv(filename)
-    indepcolumns = [col for col in pdcontent.columns if "$<" not in col]  # 自变量
-    depcolumns = [col for col in pdcontent.columns if "$<" in col]        # 因变量
+    indepcolumns = [col for col in pdcontent.columns if "$<" not in col] 
+    depcolumns = [col for col in pdcontent.columns if "$<" in col]      
 
-    # 对自变量列进行排序和去重
     tmp_sortindepcolumns = []
     for i in range(len(indepcolumns)):
         tmp_sortindepcolumns.append(sorted(list(set(pdcontent[indepcolumns[i]]))))
-    print("去重排序：", tmp_sortindepcolumns)
+    # print("去重排序：", tmp_sortindepcolumns)
 
-    sortpdcontent = pdcontent.sort_values(by=depcolumns[-1])  # 按目标从小到大排序
+    sortpdcontent = pdcontent.sort_values(by=depcolumns[-1]) 
     ranks = {}
-    # 目标转化为list再去重，再排序
     for i, item in enumerate(sorted(set(sortpdcontent[depcolumns[-1]].tolist()))):
         ranks[item] = i
 
@@ -125,9 +117,6 @@ def get_objective_score_similarly(best_solution,dict_search,model_name):
         return tmp_result
 
 
-
-
-
 # 两个点交叉  
 def crossover(ind1, ind2):
     tmp1 ,tmp2 = [],[]
@@ -140,14 +129,12 @@ def crossover(ind1, ind2):
             tmp2.append(ind1[i])
     return tmp1,tmp2
 
-# 随机点位变异
 def mutation(ind,independent_set):
     for i in range(len(ind)):
         if random.random() < 2/len(independent_set):
             ind[i] = random.sample(independent_set[i],1)[0]
     return ind
 
-# 评价函数
 def evaluate(best_solution):
     global dict_search,modelname
     return get_objective_score_similarly(best_solution,dict_search,modelname)
@@ -155,14 +142,9 @@ def evaluate(best_solution):
 def tournament_selection(pop, pop_size):
     next_gen = []
     for j in range(pop_size):
-        # 随机选择k个个体进行比赛
         k = 3
         competitors = random.sample(pop, k)
-        
-        #选择fitness最高的个体作为胜者 
         winner = min(competitors, key=fitness)
-        # print(j)
-        # 将胜者添加到下一代
         next_gen.append(winner)
 
     return next_gen
@@ -218,15 +200,6 @@ def run_ga(filename,model_name="GP",seed=1,maxlives= 100,budget=100):
                 tmp = mutation(tmp,file.independent_set)
                 pop[number] = tmp
 
-            # best = max(pop, key=evaluate)
-            # print(len(xs))
-            # xs = [tuple(x) for x in xs]
-            # used_budget = len(set(xs))
-            # print(xs,x_result[1:],used_budget)
-            # if used_budget >= budget:
-            #     return xs,x_result[1:],used_budget  
-            # if flag == 1:
-            #     return xs,x_result[1:],used_budget 
     except GotoFailedLabelException:
         xs = [tuple(x) for x in xs]
         used_budget = len(set(xs))

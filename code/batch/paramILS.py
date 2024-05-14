@@ -2,11 +2,8 @@
 ## symple basicILS
 
 import pandas as pd
-import numpy as np
 import random
 from random import shuffle
-from sklearn.preprocessing import StandardScaler,MinMaxScaler
-from util.get_objective_model import get_objective_score_with_model
 from util.read_model import read_model_class
 from util.get_objective_model import get_path
 from util.get_objective import get_objective_score_with_similarity
@@ -26,12 +23,10 @@ class file_data:
         self.training_set = training_set
         self.testing_set = testing_set
         self.all_set = all_set
-        self.independent_set = independent_set  # 自变量的值
+        self.independent_set = independent_set 
         self.features = features
         self.dict_search = dict_search
 
-# 得到数据
-# 返回：file_data
 
 def get_data(filename, initial_size=5):
     """
@@ -40,18 +35,16 @@ def get_data(filename, initial_size=5):
     :return: file
     """
     pdcontent = pd.read_csv(filename)
-    indepcolumns = [col for col in pdcontent.columns if "$<" not in col]  # 自变量
-    depcolumns = [col for col in pdcontent.columns if "$<" in col]        # 因变量
+    indepcolumns = [col for col in pdcontent.columns if "$<" not in col] 
+    depcolumns = [col for col in pdcontent.columns if "$<" in col]        
 
-    # 对自变量列进行排序和去重
     tmp_sortindepcolumns = []
     for i in range(len(indepcolumns)):
         tmp_sortindepcolumns.append(sorted(list(set(pdcontent[indepcolumns[i]]))))
-    print("去重排序：", tmp_sortindepcolumns)
+    # print("去重排序：", tmp_sortindepcolumns)
 
-    sortpdcontent = pdcontent.sort_values(by=depcolumns[-1])  # 按目标从小到大排序
+    sortpdcontent = pdcontent.sort_values(by=depcolumns[-1]) 
     ranks = {}
-    # 目标转化为list再去重，再排序
     for i, item in enumerate(sorted(set(sortpdcontent[depcolumns[-1]].tolist()))):
         ranks[item] = i
 
@@ -128,16 +121,11 @@ def get_objective_score_similarly(best_solution,dict_search,model_name):
 
 
 def fixed_interval_sample(lst, n, keep_ends=True):
-    # 计算间隔
     interval = (len(lst) / (n-1))  
-    # print(interval)
-    # 抽样索引
     indices = [0] + [int(i*interval) for i in range(1, n-1)]
-    # print(indices)
     if keep_ends:
         indices.append(-1)
-    
-    # 抽样并保留原序    
+     
     sampled = [lst[i] for i in indices]
     
     return sampled
@@ -176,8 +164,6 @@ class GotoFailedLabelException(Exception):
 
 def run_paramILS(filename,model_name="GP",r=10,s=3,p_restart=0.01,seed=1,maxlives=100,budget=100):
 
-    # r = 6 ## 10  ## 初始采样点，在其中选择最好的点，然后进行一次提升迭代
-    # s 选择多少个邻居来脱离局部最优点 为文章的选择 有些任意性，本来后面paramILS（N）表示有N个benchmark。
     global flag,xs,x_result,max_lives,lives,file_name,model_predict,tmp_results,seed1,budget1
     budget1 = budget
     seed1 = seed
@@ -197,17 +183,9 @@ def run_paramILS(filename,model_name="GP",r=10,s=3,p_restart=0.01,seed=1,maxlive
         if i.objective[-1] < result:
             result = i.objective[-1]
             init_configuration = i.decision
-    # import pickle
-    # import os
-    # dict_result = {}
-    # for i in file.training_set:
-    #     dict_result[tuple(i.decision)] = i.objective[-1]
-    # with open('./initial_set/'+"paramILS"+'_'+os.path.basename(filename)+'_'+str(seed)+'.pkl', 'wb') as f:
-    #     pickle.dump(dict_result, f)   
-    # raise KeyError
+
     init_configuration = iterative_first_improvement(init_configuration,file,model_name)
-    print("第一次的结果: ", get_objective_score_similarly(init_configuration,file.dict_search,model_name))
-    ## 原文未说进行多少次
+    print("First: ", get_objective_score_similarly(init_configuration,file.dict_search,model_name))
     try:
         while loop <= 50: #2
             tmp_configuration = init_configuration
@@ -217,7 +195,7 @@ def run_paramILS(filename,model_name="GP",r=10,s=3,p_restart=0.01,seed=1,maxlive
                 tmp = get_objective_score_similarly(init_configuration,file.dict_search,model_name)
                 if get_objective_score_similarly(tmp_configuration,file.dict_search,model_name) < tmp:
                     init_configuration = tmp_configuration
-                    print("扰动找到的结果： ",tmp)
+                    print("Then: ",tmp)
             random_tmp = random.random()
             if random_tmp <= p_restart:
                 init_configuration = random.sample([i.decision for i in file.all_set],1)[0]

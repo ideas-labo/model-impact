@@ -12,7 +12,6 @@ from scipy import spatial
 from util.get_objective import get_objective_score_with_similarity
 from collections import defaultdict
 
-
 class solution_holder:
     def __init__(self, id, decisions, objective, rank):
         self.id = id
@@ -26,12 +25,9 @@ class file_data:
         self.training_set = training_set
         self.testing_set = testing_set
         self.all_set = all_set
-        self.independent_set = independent_set  # 自变量的值
+        self.independent_set = independent_set 
         self.features = features
         self.dict_search = dict_search
-
-# 得到数据
-# 返回：file_data
 
 def get_data(filename, initial_size=5):
     """
@@ -40,18 +36,17 @@ def get_data(filename, initial_size=5):
     :return: file
     """
     pdcontent = pd.read_csv(filename)
-    indepcolumns = [col for col in pdcontent.columns if "$<" not in col]  # 自变量
-    depcolumns = [col for col in pdcontent.columns if "$<" in col]        # 因变量
+    indepcolumns = [col for col in pdcontent.columns if "$<" not in col] 
+    depcolumns = [col for col in pdcontent.columns if "$<" in col]     
 
-    # 对自变量列进行排序和去重
     tmp_sortindepcolumns = []
     for i in range(len(indepcolumns)):
         tmp_sortindepcolumns.append(sorted(list(set(pdcontent[indepcolumns[i]]))))
-    print("去重排序：", tmp_sortindepcolumns)
+    # print("去重排序：", tmp_sortindepcolumns)
 
-    sortpdcontent = pdcontent.sort_values(by=depcolumns[-1])  # 按目标从小到大排序
+    sortpdcontent = pdcontent.sort_values(by=depcolumns[-1])  
     ranks = {}
-    # 目标转化为list再去重，再排序
+
     for i, item in enumerate(sorted(set(sortpdcontent[depcolumns[-1]].tolist()))):
         ranks[item] = i
 
@@ -220,10 +215,7 @@ def better(item1, item2):
     else:
         return 3
 
-
-import math
 def hamming_distance(x, y):
-    """计算两个等长01向量的汉明距离"""
     
     distance = 0
     for xi, yi in zip(x, y):
@@ -240,33 +232,29 @@ def num_1(x):
 
 
 def split_binary(items):
-    # 随机选择一个item作为原点 
     rand = random.choice(items) 
     
-    # 计算每个item的半径和距离
     print(len(items))
     for x in items:
-        r = num_1(x.id) # x中“1”的个数
-        d = hamming_distance(x.id, rand.id) # x与rand的汉明距离
+        r = num_1(x.id) 
+        d = hamming_distance(x.id, rand.id) 
         x.r = r  
         x.d = d
 
-    # 按半径r分组
     on_same_r = defaultdict(list) 
     for x in items:
         on_same_r[x.r].append(x)
-    # 在同一半径下,按d均匀分布角度
+
     for r, r_items in on_same_r.items():
         r_items.sort(key=lambda x: x.d)
         unit_angle = 2*math.pi/len(r_items)
         for i, x in enumerate(r_items):
             x.theta = i * unit_angle
 
-    # 将空间等分为多个扇形区域
     num_areas = min(len(items[0].id),10)
     d_thresholds = np.linspace(0, max(x.d for x in items), num_areas)
     # print("d_thresholds:",d_thresholds)
-    # 在每个扇形区域选代表性解
+
     west = [] 
     east = []
     west_items = []
@@ -295,7 +283,6 @@ class GotoFailedLabelException(Exception):
 
 
 def euclidean_distance(x, y):
-    """计算两个向量之间的欧氏距离"""
     
     distance = 0.0
     for xi, yi in zip(x, y):
@@ -305,10 +292,8 @@ def euclidean_distance(x, y):
 
 def split_continuous(items):
 
-    # 随机选择一个item作为基准
     rand = random.choice(items)  
     
-    # 找到与rand最远的east
     east = None
     max_dist = 0
     # print(rand)
@@ -317,8 +302,7 @@ def split_continuous(items):
         if dist > max_dist:
             east = x
             max_dist = dist
-            
-    # 找到与east最远的west            
+                      
     west = None
     max_dist = 0
     for x in items:
@@ -326,18 +310,15 @@ def split_continuous(items):
         if dist > max_dist:
             west = x
             max_dist = dist
-
-    # 计算每个item到west和east的距离        
+     
     for x in items:
         a = euclidean_distance(x.id, west.id)
         b = euclidean_distance(x.id, east.id)
         c = euclidean_distance(west.id, east.id)
         x.d = (a**2 + c**2 - b**2) / (2*c)
-    
-    # 按d排序        
+         
     sorted_items = sorted(items, key=lambda x: x.d)
     
-    # 划分两半
     mid = len(sorted_items) // 2
     west_items = sorted_items[:mid]
     east_items = sorted_items[mid:]

@@ -1,17 +1,9 @@
 
 import pandas as pd
-import numpy as np
-from sklearn.preprocessing import MinMaxScaler
-from random import shuffle
 import random
-import math
-from util.get_objective_model import get_objective_score_with_model
 from util.read_model import read_model_class
 from util.get_objective_model import get_path
-from scipy import spatial
 from util.get_objective import get_objective_score_with_similarity
-
-
 
 class solution_holder:
     def __init__(self, id, decisions, objective, rank):
@@ -26,12 +18,10 @@ class file_data:
         self.training_set = training_set
         self.testing_set = testing_set
         self.all_set = all_set
-        self.independent_set = independent_set  # 自变量的值
+        self.independent_set = independent_set  
         self.features = features
         self.dict_search = dict_search
 
-# 得到数据
-# 返回：file_data
 
 def get_data(filename, initial_size=5):
     """
@@ -40,18 +30,16 @@ def get_data(filename, initial_size=5):
     :return: file
     """
     pdcontent = pd.read_csv(filename)
-    indepcolumns = [col for col in pdcontent.columns if "$<" not in col]  # 自变量
-    depcolumns = [col for col in pdcontent.columns if "$<" in col]        # 因变量
+    indepcolumns = [col for col in pdcontent.columns if "$<" not in col] 
+    depcolumns = [col for col in pdcontent.columns if "$<" in col]        
 
-    # 对自变量列进行排序和去重
     tmp_sortindepcolumns = []
     for i in range(len(indepcolumns)):
         tmp_sortindepcolumns.append(sorted(list(set(pdcontent[indepcolumns[i]]))))
-    print("去重排序：", tmp_sortindepcolumns)
+    # print("去重排序：", tmp_sortindepcolumns)
 
-    sortpdcontent = pdcontent.sort_values(by=depcolumns[-1])  # 按目标从小到大排序
+    sortpdcontent = pdcontent.sort_values(by=depcolumns[-1]) 
     ranks = {}
-    # 目标转化为list再去重，再排序
     for i, item in enumerate(sorted(set(sortpdcontent[depcolumns[-1]].tolist()))):
         ranks[item] = i
 
@@ -127,52 +115,16 @@ def get_objective_score_similarly(best_solution,dict_search,model_name):
             raise GotoFailedLabelException
         return tmp_result
 
-
-# EMCMC采样
-# def emcmc(max_gen, file):
-    
-#     conf_best = 0
-#     #   perf_best = evaluate(conf_seed)
-#     perf_best = 1e36
-#     # 初始随机采样
-#     f_len = len(file.independent_set)
-#     n = min(4*f_len,50)
-#     conf_parents = [i.decision for i in file.test_set][n]
-#     #   conf_parents = random_sample(configs, n) 
-
-#     for i in range(max_gen):
-#         print("conex:",i+1)
-#         confs_accepted = []
-
-#         # 评估每个父配置
-#         for conf in conf_parents:
-#             perf = evaluate(conf)
-#             if accept(perf_best, perf):
-#                 confs_accepted.append(conf)
-#             if perf > perf_best:
-#                 conf_best = conf
-#                 perf_best = perf
-            
-#     # 进化生成新配置       
-    
-#     conf_parents = evolve(conf_best, confs_accepted,f_len,file.independent_set)
-    
-#     return conf_best
-
-# 进化操作
 def evolve(conf_best, confs_accepted,f_len,independent_set):
 
     conf_children = [] 
 
-    # 交叉
-    
     for conf in confs_accepted:
         crossover_params_index = random_select_params(f_len, ratio=0.5) 
         # print(crossover_params_index)
         child = crossover(conf_best, conf, crossover_params_index)
         conf_children.append(child)
 
-    # 突变
     mutation_params = random_select_params(f_len, ratio=0.12)
     for child in conf_children:
         child = mutate(child, mutation_params,independent_set)
@@ -184,18 +136,13 @@ def random_select_params(f_len,ratio):
         n = 1
     return random.sample(range(f_len),n)
 
-    
-    
-# 采样preprocess后的configs
 def random_sample(configs, n):
     return random.sample(configs, n) 
 
-# 评估配置在给定job上的性能  
 def evaluate(best_solution):
     global dict_search,modelname
     return get_objective_score_similarly(best_solution,dict_search,modelname)
 
-# 接受配置的判断
 def accept(perf_best, perf):
     try:
         p = min(1,perf_best/perf)
@@ -209,14 +156,12 @@ def accept(perf_best, perf):
     else:
         return False
 
-# 交叉操作
 def crossover(conf1, conf2, params):
     child = conf1.copy()
     for param in params:
         child[param] = conf2[param] 
     return child
 
-# 突变操作  
 def mutate(conf, params,independent_set):
     child = conf.copy()
     for param in params:
@@ -252,7 +197,6 @@ def run_conex(filename,model_name="GP",seed=1,maxlives= 100,budget=100):
             conf_best = 0
             #   perf_best = evaluate(conf_seed)
             perf_best = 1e36
-            # 初始随机采样
             f_len = len(file.independent_set)
             n = min(4*f_len,60)
             conf_parents = random.sample(conf_parents_all,n)
@@ -271,18 +215,10 @@ def run_conex(filename,model_name="GP",seed=1,maxlives= 100,budget=100):
                     if perf < perf_best:
                         conf_best = conf
                         perf_best = perf
-                    
-                # 进化生成新配置       
-                # print(conf_best, confs_accepted,f_len)
-                # print(confs_accepted)
                 conf_parents = evolve(conf_best, confs_accepted,f_len,file.independent_set)
                 # print(conf_parents)
                 xs = [tuple(x) for x in xs]
                 used_budget = len(set(xs))
-                # if used_budget >= budget:
-                #     return xs,x_result[1:],used_budget  
-                # if flag == 1:
-                #     return xs,x_result[1:],used_budget 
                 if last_budget == used_budget:
                     break
                 last_budget = used_budget

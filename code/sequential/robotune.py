@@ -76,27 +76,23 @@ def clean_data(important_features,file):
     for i in file.features:
         if i not in important_features:
             unimportant_features.append(i)
-    feature_sort = {x:i for i, x in enumerate(file.features)}  # 特征:特征编号
-    # 转置
+    feature_sort = {x:i for i, x in enumerate(file.features)}  
     features = [t.decision for t in file.all_set]
     feature_count = list(map(list, zip(*features)))
-    # 得到出现最多的数
     feature_dict = {}
     for f in unimportant_features:
         tmp = feature_count[feature_sort[f]]
         x = max(set(tmp),key=tmp.count)
         feature_dict[f] = x
-    print(feature_dict.keys())
-    print(feature_dict.values())
+    # print(feature_dict.keys())
+    # print(feature_dict.values())
 
-    # 把file里面的元素删了
     for i in [file.all_set,file.training_set,file.testing_set]:
         for feature in unimportant_features:
             for j in i:
                 if j.decision[feature_sort[feature]] != feature_dict[feature]:
                     i.remove(j)
     
-    # 修改去重的自变量
     for feature in unimportant_features:
         file.independent_set[feature_sort[feature]] = [feature_dict[feature]]
     # print(file.independent_set)
@@ -108,25 +104,14 @@ def get_sig_params(header, features, target, num):
     X = np.array(features)
     y = target
     names = header
-
-    # 划分训练集和测试集
     X_train, X_test, y_train, y_test = train_test_split(X, y, test_size=0.3, random_state=42)
-
-    # 创建随机森林模型并拟合
-    # rf = RandomForestRegressor(n_estimators=100, random_state=42)
     rf = RandomForestRegressor()
     X_train = X_train[:100]
     y_train = y_train[:100]
     rf.fit(X_train, y_train)
-
-    # 计算原始预测准确性
     y_pred = rf.predict(X_test)
     acc = r2_score(y_test, y_pred)
-
-    # 初始化 MDA 字典
     scores = defaultdict(list)
-
-    # 对每个特征进行打乱并计算 MDA
     for i in range(10):
         for i in range(len(X[0])):
             X_t = X_test.copy()
@@ -134,16 +119,11 @@ def get_sig_params(header, features, target, num):
             y_t = rf.predict(X_t)
             shuff_acc = r2_score(y_test, y_t)
             scores[names[i]].append((acc - shuff_acc) / acc)
-
-    # 输出结果
-    print("Features sorted by their score:")
-    print(sorted([[round(np.mean(score), 4), feat] for feat, score in scores.items()], reverse=True))
+    # print("Features sorted by their score:")
+    # print(sorted([[round(np.mean(score), 4), feat] for feat, score in scores.items()], reverse=True))
     return  [i[1] for i in sorted([[round(np.mean(score), 4), feat] for feat, score in scores.items()], reverse=True)][:num+1]         
 
 def Latin_sample(file, num_samples = 20):
-    # filename = "./Data/Dune.csv"
-    # file = get_data(filename)
-    # header, features, target = load_features(file)
 
     def round_num(num, discrete_list):
         max_num = 1e20
@@ -160,15 +140,12 @@ def Latin_sample(file, num_samples = 20):
     for i in range(len(bounds)):
         if len(bounds[i]) == 1:
             # print(bounds[i])
-            bounds[i].append(1.1) # 加一个数凑出范围，不影响结果，会近似
+            bounds[i].append(1.1) 
 
     for i in range(len(file.independent_set)):
         variables[file.features[i]] = bounds[i]
     sample = build.space_filling_lhs(variables, num_samples)
-
     data_array = np.array(sample)
-    # 然后转化为list形式
-
     data_list = data_array.tolist()
 
     copy = data_list.copy()
@@ -241,21 +218,6 @@ def  gp_hedge(gains,y_opt,model,file,global_step,Scaler_x,actions,xs):
                 x_max = res.x
                 max_acq = res.fun
                 # print(res.fun)
-        
-            # tmp = (res.x,res.fun)
-            # tmps.append(tmp)
-            # tmp = (x_try,-ac(model, x_try.reshape(1, -1),y_opt))
-            # tmps.append(tmp)
-        # sort_merged_ei = sorted(tmps, key=lambda x: x[1], reverse=False)
-        # print(sort_merged_ei)
-        # for i,j in sort_merged_ei:
-        #     scaler_i = Scaler_x.inverse_transform([i])
-        #     origin_i = get_similar_x(file.dict_search,scaler_i[0])
-        #     # print(xs)
-        #     if origin_i not in actions and origin_i not in xs:
-        #         x_max = i
-        #         break
-
         x_maxs.append(x_max)
 
     logits = np.array(gains)
@@ -273,7 +235,7 @@ def run_robotune(initial_size, filename, model_name="GP",budget=20,seed=0,maxliv
     
     global_step = 0
     memory = ReplayMemory()
-    num_collections = initial_size  # 多少个已知量
+    num_collections = initial_size  
     file = read_file.get_data(filename)
     header, features, target = read_file.load_features(file)
     num = int(9/10*len(header))
@@ -326,15 +288,11 @@ def run_robotune(initial_size, filename, model_name="GP",budget=20,seed=0,maxliv
 
         x_max,x_maxs = gp_hedge(gains,y_min,model,file,global_step,Scaler_x,actions,xs)
         if model_name == "GP":
-            # print("预测结果: ",[model.predict([x_maxs[i]]) for i in range(3)])
             for i in range(len(gains)):
                 gains[i] -= model.predict([x_maxs[i]])
-            # print("gains: ",gains)
         else:
-            # print("预测结果: ",[model.predict([x_maxs[i]])[0][0] for i in range(3)])
             for i in range(len(gains)):
                 gains[i] -= model.predict([x_maxs[i]])[0][0]
-            # print("gains: ",gains)
         for i in range(len(x_max)):
             x_max[i] = (max(file.independent_set[i])-min(file.independent_set[i]))*x_max[i] + min(file.independent_set[i])
         reward,tuple_i = get_objective.get_objective_score_with_similarity(file.dict_search, x_max)

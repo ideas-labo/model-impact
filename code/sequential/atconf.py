@@ -18,8 +18,6 @@ def choose(feature_count,feature_sort,now_best,unimportant_features,dropout_mix_
         dropout_fill = 'copy'
     else:
         dropout_fill = 'rand'
-    print('show dropout_fill')
-    print(dropout_fill)
 
     if dropout_fill == 'rand':
         for f in unimportant_features:
@@ -33,24 +31,17 @@ def choose(feature_count,feature_sort,now_best,unimportant_features,dropout_mix_
             feature_dict[f] = x
         return feature_dict
             
-
-# 清理不满足的数据
 def clean_data(important_features, file, now_best):
     unimportant_features = []
     for i in file.features:
         if i not in important_features:
             unimportant_features.append(i)
-    feature_sort = {x: i for i, x in enumerate(file.features)}  # 特征:特征编号
-    # 转置
+    feature_sort = {x: i for i, x in enumerate(file.features)} 
     features = [t.decision for t in file.all_set]
     feature_count = list(map(list, zip(*features)))
-    # 得到出现最多的数
-    feature_dict = choose(feature_count,feature_sort,now_best,unimportant_features)
-    # print(feature_dict.keys())
-    # print(feature_dict.values())
 
-    # 把file里面的元素删了
-    # print(unimportant_features)
+    feature_dict = choose(feature_count,feature_sort,now_best,unimportant_features)
+
     for i in [file.all_set, file.training_set, file.testing_set]:
         for feature in unimportant_features:
             for j in i:
@@ -59,12 +50,10 @@ def clean_data(important_features, file, now_best):
                 if j.decision[feature_sort[feature]] != feature_dict[feature]:
                     i.remove(j)
 
-    # 修改去重的自变量
     for feature in unimportant_features:
         file.independent_set[feature_sort[feature]] = [feature_dict[feature]]
     # print(file.independent_set)
     return unimportant_features
-
 
 def round_num(num, discrete_list):
     max_num = 1e20
@@ -75,42 +64,7 @@ def round_num(num, discrete_list):
             return_num = i
     return return_num
 
-
 def acq_max(ac, model, y_max, bounds, random_state, n_warmup=1000, n_iter=20):
-    """
-    A function to find the maximum of the acquisition function
-
-    It uses a combination of random sampling (cheap) and the 'L-BFGS-B'
-    optimization method. First by sampling `n_warmup` (1e5) points at random,
-    and then running L-BFGS-B from `n_iter` (250) random starting points.
-
-    Parameters
-    ----------
-    :param ac:
-        The acquisition function object that return its point-wise value.
-
-    :param gp:
-        A gaussian process fitted to the relevant data.
-
-    :param y_max:
-        The current maximum known value of the target function.
-
-    :param bounds:
-        The variables bounds to limit the search of the acq max.
-
-    :param random_state:
-        instance of np.RandomState random number generator
-
-    :param n_warmup:
-        number of times to randomly sample the aquisition function
-
-    :param n_iter:
-        number of times to run scipy.minimize
-
-    Returns
-    -------
-    :return: x_max, The arg max of the acquisition function.
-    """
     if ac == "LCB":
         def ac(x,y_max,model,kappa=2.576):
             # mean, std = model.predict(x, return_std=True)
@@ -124,8 +78,6 @@ def acq_max(ac, model, y_max, bounds, random_state, n_warmup=1000, n_iter=20):
         ys.append(ac(x=[i], model=model, y_max=y_max))
     x_min = x_tries[ys.index(min(ys))]
     min_acq = min(ys)
-    # print(max_acq)
-    # print(max_acq)
     # Explore the parameter space more throughly
     x_seeds = random_state.uniform(bounds[:, 0], bounds[:, 1],
                                     size=(n_iter, bounds.shape[0]))
@@ -154,16 +106,12 @@ def acq_max(ac, model, y_max, bounds, random_state, n_warmup=1000, n_iter=20):
     return np.clip(x_min, bounds[:, 0], bounds[:, 1])
 
 def recover(x_new, header,now_best,unimportant_features,features):
-    feature_sort = {x: i for i, x in enumerate(header)}  # 特征:特征编号
-
-    # 得到出现最多的数
+    feature_sort = {x: i for i, x in enumerate(header)} 
     feature_dict = choose(features,feature_sort,now_best,unimportant_features)
     for feature in feature_dict:
         x_new.insert(feature_sort[feature],feature_dict[feature])
     return x_new
         
-
-
 def run_atconf(filename,initial_size=10, model_name="LR", acqf_name = "LCB",budget=20, features_num=9,seed=0, maxlives=100):
 
     file = read_file.get_data(filename, initial_size)
@@ -208,9 +156,7 @@ def run_atconf(filename,initial_size=10, model_name="LR", acqf_name = "LCB",budg
             if j in unimportant_features:
                 unimportant_features_id.append(i)
         
-        # 删除未选择特征
         print(unimportant_features_id)
-
         
         x_train = Scaler_x.transform(x_init)
         Scaler_y = StandardScaler().fit(y_init)
@@ -223,8 +169,6 @@ def run_atconf(filename,initial_size=10, model_name="LR", acqf_name = "LCB",budg
             pickle.dump((Scaler_x,Scaler_y,unimportant_features_id), f)
             f.close()
 
-
-
         x_train = np.delete(x_train, unimportant_features_id, axis=1)
 
         if model_name == "GP":
@@ -235,7 +179,7 @@ def run_atconf(filename,initial_size=10, model_name="LR", acqf_name = "LCB",budg
             
             if step%10 == 0:
                 f = open('./Pickle_all/PickleLocker_atconf_models'+ '/'+str(filename)[:-4] +'/'+str(model_name)+'_'+'seed'+str(seed) +'_'+'step'+str(step) + '.p', 'wb')
-                pickle.dump(model, f)  # 修改
+                pickle.dump(model, f)  
                 f.close()
         else:
             model = bagging(x_train,y_train,learning_model=model_name,file_name=filename,seed=seed,step=step,funcname="atconf")
@@ -245,9 +189,7 @@ def run_atconf(filename,initial_size=10, model_name="LR", acqf_name = "LCB",budg
         y_max = max(y_train)
         # print(bounds)
         x_new = acq_max(ac=acqf_name, model=model, y_max=y_max, bounds=bounds, random_state=np.random.RandomState(step))
-        
         x_new = x_new.tolist()
-    
         x_new = recover(x_new, header, now_best, unimportant_features, file.independent_set)
         for i in range(len(x_new)):
             x_new[i] = (max(file.independent_set[i])-min(file.independent_set[i]))*x_new[i] + min(file.independent_set[i])
