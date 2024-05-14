@@ -10,7 +10,7 @@ This repository contains the data and code for the following paper:
 3. [Code and quick start](#Codeandquickstart)
 4. [Datasets](#Datasets)
 5. [Raw experiments results](#Rawexperimentsresults)
-6. [Supplementary](#Supplementary)
+6. [RQ_supplementary](#RQ_supplementary)
 
 <!-- vscode-markdown-toc-config
 	numbering=true
@@ -103,5 +103,5 @@ The experiment data reported in the work can be found at: https://zenodo.org/rec
 - e.g. "./PickleLocker_atconf_models/Data_big/7z/GP_seed101_step20.p"<br> -->
 
 
-##  6. <a name='Supplementary'></a>Supplementary
-"supplementary.pdf" contains the specific best and worst models in this study.
+##  6. <a name='RQ_supplementary'></a>RQ_supplementary
+RQ_supplementary contains the supplementary files for our research questions.
