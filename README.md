@@ -96,7 +96,7 @@ Thanks for their efforts. Details of the datasets are given in our paper.
 The experiment data reported in the work can be found at: https://zenodo.org/records/11172102. The naming rule follow as: <br>
 
 
-*Result*: `PickleLocker\_[tune]\_results/[Data_big\small]/[Data]/[model]\_[seed_num].csv`  <br>
+*Result*: `PickleLocker_[tune]_results/[Data_big\small]/[Data]/[model]_[seed_num].csv`  <br>
 - e.g. "./PickleLocker_atconf_results/Data_big/7z/RF_seed101.csv"<br>
 
 <!-- *Model*: `PickleLocker\_[tuner]\_results/[Data_big\small]/[Data]/[model]\_[seed_num]\_[step_num].p`  <br>
