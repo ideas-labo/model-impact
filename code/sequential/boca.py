@@ -19,7 +19,6 @@ def model_randomforest(train_independent, train_dependent):
 
     return model
 
-# 得到EI：用于acquire function
 def ei(m,s,eta):
     def calculate_f():
         z = (eta - m) / s
@@ -32,7 +31,7 @@ def ei(m,s,eta):
 
     return f
 
-def get_ei(pred, eta):  #eta最小值
+def get_ei(pred, eta):  
     pred = np.array(pred).transpose(1, 0)
     m = np.mean(pred, axis=1)
     s = np.std(pred, axis=1)
@@ -52,40 +51,28 @@ def get_ei(pred, eta):  #eta最小值
     return f
 
 def fixed_interval_sample(lst, n, keep_ends=True):
-    # 计算间隔
     interval = (len(lst) / (n-1))  
-    # print(interval)
-    # 抽样索引
     indices = [0] + [int(i*interval) for i in range(1, n-1)]
-    # print(indices)
     if keep_ends:
         indices.append(-1)
-    
-    # 抽样并保留原序    
     sampled = [lst[i] for i in indices]
     
     return sampled
 
-# 返回：测试序列，模型
-
 def get_training_sequence_by_BOCA(fnum, rnum, training_indep, training_dep, sort_indepcolumns):
     model = model_randomforest(training_indep, training_dep)
-    ######## 替换模型修改这里 ############# 
     features = model.feature_importances_
-    feature_sort = [[i, x] for i, x in enumerate(features)]  # 特征及特征编号
+    feature_sort = [[i, x] for i, x in enumerate(features)] 
     feature_selected = sorted(feature_sort, key=lambda x: x[1], reverse=True)[
-        :fnum]  # 选出来的重要特征
+        :fnum] 
     feature_not_selected = sorted(
         feature_sort, key=lambda x: x[1], reverse=True)[fnum:]
     comb, comb1 = [], []
     inc_important = []
     inc_unimportant = []
-
-    # 生成重要的特征
     tmp_important = []
     for i in feature_selected:
         tmp_important.append(sort_indepcolumns[i[0]])
-    # 含有的特征数量太多了，抽样减少一部分
     for i in range(len(tmp_important)):
         if len(tmp_important[i])>10:
             # print(tmp_important[i])
@@ -93,30 +80,16 @@ def get_training_sequence_by_BOCA(fnum, rnum, training_indep, training_dep, sort
     
     for i in product(*[i for i in tmp_important]):
         comb.append(i)
-    
-    # for i in range(2 ** fnum):
-    #     comb = bin(i).replace('0b', '')
-    #     comb = '0' * (fnum - len(comb)) + comb
-    #     # 生成 [重要特征序号，它的值]
+
     for i in comb:
         tmp = []
         for k, s in enumerate(i):
             tmp.append([feature_selected[k][0], s])
         inc_important.append(tmp)
-    # print('tmp_important',len(inc_important))
-    # 生成不重要的特征
     tmp_not_important = []
     # print(sort_indepcolumns)
     for i in feature_not_selected:
         tmp_not_important.append(sort_indepcolumns[i[0]])
-    # print(tmp_not_important)
-    # def gen_comb1():
-    #     for i in product(*[i for i in tmp_not_important]):
-    #         yield i
-    # comb1 = random.sample(gen_comb1(), int(rnum))
-    # for i in product(*[i for i in tmp_not_important]):
-    #     comb1.append(i)
-    # comb1 = random.sample(comb1, int(rnum))
     
     for _ in range(max(int(rnum),1)):
         single = []
@@ -128,11 +101,6 @@ def get_training_sequence_by_BOCA(fnum, rnum, training_indep, training_dep, sort
         for k, s in enumerate(i):
             tmp.append([feature_not_selected[k][0], s])
         inc_unimportant.append(tmp)
-    # print('tmp_umimportant',len(inc_unimportant))
-    # for i in range(int(rnum)):
-    #     tmp = [[feature_not_selected[i][0], round(random.uniform(lower_bound[i] * 1.0, upper_bound[i] * 1.0))]
-    #            for i in range(len(feature_not_selected))]
-    #     inc_unimportant.append(tmp)
 
     inc = []
     for i in inc_important:
@@ -141,11 +109,7 @@ def get_training_sequence_by_BOCA(fnum, rnum, training_indep, training_dep, sort
             tmp = i + j
             tmp = sorted(tmp, key=lambda x: x[0], reverse=False)
             inc.append(tmp)
-    # print(inc[0],inc[1])
-    # print("Have finished find test sequence")
     return inc, model
-
-# 返回：下一个抽样点
 
 def get_best_configuration_id_BOCA(training_indep, training_dep, all_indep, fnum, rnum, eta, sort_indepcolumns,model_name,filename,seed,step):
     test_sequence, model = get_training_sequence_by_BOCA(
@@ -206,11 +170,6 @@ def get_best_configuration_id_BOCA(training_indep, training_dep, all_indep, fnum
     
     print("Not found, please correct the parameters: fnum, rnum")
             
-# 返回：对应decision的object，和decision（格式化之后）
-
-
-
-
 def run_boca(filename, initial_size, maxlives, budget, fnum, rnum0,model_name="RF",seed=0):
     # fnum定义的重要特征个数 # rnum0衰减函数初始值，即一开始要采样的非重要特征的个数
     
@@ -280,11 +239,3 @@ def run_boca(filename, initial_size, maxlives, budget, fnum, rnum0,model_name="R
         steps += 1
     return np.array(xs), np.array(results), np.array(x_axis), result, best_loop,len(tuple_is)
 
-
-# if __name__ == "__main__":
-#     filenames = ["./Data/"+f for f in listdir("./Data")]
-#     # for filename in filenames:
-#     #     run_BOCA(filename, initial_size=20,
-#     #              maxlives=10, budget=40, fnum=4, rnum0=2**4)
-#     run_boca(filename="./Data_small/Apache_AllNumeric.csv",
-#              initial_size=20, maxlives=10, budget=40, fnum=2, rnum0=2**5)

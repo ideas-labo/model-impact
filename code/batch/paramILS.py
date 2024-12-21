@@ -167,7 +167,7 @@ def run_paramILS(filename,model_name="GP",r=10,s=3,p_restart=0.01,seed=1,maxlive
     global flag,xs,x_result,max_lives,lives,file_name,model_predict,tmp_results,seed1,budget1
     budget1 = budget
     seed1 = seed
-    maxlives = int(maxlives*2)
+    maxlives = int(maxlives)
     model_predict = 0
     file_name = filename
     max_lives =maxlives

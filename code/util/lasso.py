@@ -2,7 +2,6 @@
 # OtterTune - lasso.py
 #
 # Copyright (c) 2017-18, Carnegie Mellon University Database Group
-#
 from sklearn.linear_model import lasso_path
 from abc import ABCMeta, abstractmethod
 import numpy as np

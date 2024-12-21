@@ -106,8 +106,6 @@ def get_objective_score_similarly(best_solution,dict_search,model_name):
         return tmp_result
 
 
-
-
 def run_random(filename,model_name="GP",seed=1,maxlives= 100,budget=100):
     global flag,xs,x_result,max_lives,lives,file_name,model_predict,tmp_results
     global dict_search,modelname,seed1

@@ -1,11 +1,9 @@
 ## GGA 遗传算法 with 两个性别 各自作用不同
 import pandas as pd
 import numpy as np
-from sklearn.preprocessing import MinMaxScaler
 from random import shuffle
 import random
 import math
-from util.get_objective_model import get_objective_score_with_model
 from util.read_model import read_model_class
 from util.get_objective_model import get_path
 from util.get_objective import get_objective_score_with_similarity
@@ -30,12 +28,10 @@ class file_data:
         self.training_set = training_set
         self.testing_set = testing_set
         self.all_set = all_set
-        self.independent_set = independent_set  # 自变量的值
+        self.independent_set = independent_set 
         self.features = features
         self.dict_search = dict_search
 
-# 得到数据
-# 返回：file_data
 
 def get_data(filename, initial_size=5):
     """
@@ -44,18 +40,16 @@ def get_data(filename, initial_size=5):
     :return: file
     """
     pdcontent = pd.read_csv(filename)
-    indepcolumns = [col for col in pdcontent.columns if "$<" not in col]  # 自变量
-    depcolumns = [col for col in pdcontent.columns if "$<" in col]        # 因变量
-
-    # 对自变量列进行排序和去重
+    indepcolumns = [col for col in pdcontent.columns if "$<" not in col] 
+    depcolumns = [col for col in pdcontent.columns if "$<" in col]       
     tmp_sortindepcolumns = []
     for i in range(len(indepcolumns)):
         tmp_sortindepcolumns.append(sorted(list(set(pdcontent[indepcolumns[i]]))))
-    print("去重排序：", tmp_sortindepcolumns)
+    # print("去重排序：", tmp_sortindepcolumns)
 
-    sortpdcontent = pdcontent.sort_values(by=depcolumns[-1])  # 按目标从小到大排序
+    sortpdcontent = pdcontent.sort_values(by=depcolumns[-1]) 
     ranks = {}
-    # 目标转化为list再去重，再排序
+
     for i, item in enumerate(sorted(set(sortpdcontent[depcolumns[-1]].tolist()))):
         ranks[item] = i
 
@@ -156,7 +150,7 @@ def run_gga(filename,model_name="GP",seed=1,maxlives= 100,budget=100):
     global flag,xs,x_result,max_lives,lives,file_name,model_predict,tmp_results,seed1,budget1
     budget1 = budget
     seed1=seed
-    maxlives = int(maxlives*2)
+    maxlives = int(maxlives)
     model_predict = 0
     file_name = filename
     max_lives = maxlives
@@ -199,9 +193,7 @@ def run_gga(filename,model_name="GP",seed=1,maxlives= 100,budget=100):
             shuffle(N_ones)
             round = int(200/A*(lens_N)/100)
             lens = len(C_ones)
-            # print(C_ones)
-            # print(lens)
-            # 开始遗传算法
+
             for j in range(round):
                 child = crossover(C_ones[j%lens],N_ones[j])
                 child = mutation(child,file.independent_set)

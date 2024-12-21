@@ -2,11 +2,13 @@ import argparse
 import numpy as np
 import time
 import os
+import pickle
 import random
+import pandas as pd
+import warnings
 from random import sample
 from doepy import read_write
 from numpy import genfromtxt
-import pandas as pd
 from collections import Counter
 from utils.SPL_sampling import generate_training_sizes
 from utils.general import get_non_zero_indexes, process_training_data
@@ -14,11 +16,8 @@ from utils.HINNPerf_data_preproc import system_samplesize, seed_generator, DataP
 from utils.HINNPerf_args import list_of_param_dicts
 from utils.HINNPerf_models import MLPHierarchicalModel
 from utils.HINNPerf_model_runner import ModelRunner
-import warnings
 from util.read_model import read_model_class
 from util.get_objective_model import get_path
-import pickle
-
 
 warnings.filterwarnings('ignore')
 def dimensions(lst):
@@ -44,7 +43,6 @@ def HINNPerf(X_train,Y_train,file_name):
 
     data_gen = DataPreproc(X_train,Y_train)
     runner = ModelRunner(data_gen, MLPHierarchicalModel)
-
 
     config = dict(
         input_dim = [len(X_train[0])],

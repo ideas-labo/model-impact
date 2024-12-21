@@ -2,7 +2,7 @@ import pandas as pd
 import numpy as np
 import random
 
-random.seed(1)
+# random.seed(1)
 
 class solution_holder:
     def __init__(self, id, decisions, objective, rank):
@@ -35,13 +35,11 @@ def get_data(filename, initial_size=5):
     pdcontent = pd.read_csv(filename)
     indepcolumns = [col for col in pdcontent.columns if "$<" not in col]  # 自变量
     depcolumns = [col for col in pdcontent.columns if "$<" in col]        # 因变量
-
     # 对自变量列进行排序和去重
     tmp_sortindepcolumns = []
     for i in range(len(indepcolumns)):
         tmp_sortindepcolumns.append(sorted(list(set(pdcontent[indepcolumns[i]]))))
     print("去重排序：", tmp_sortindepcolumns)
-
     sortpdcontent = pdcontent.sort_values(by=depcolumns[-1])  # 按目标从小到大排序
     ranks = {}
     # 目标转化为list再去重，再排序

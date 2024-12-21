@@ -1,43 +1,24 @@
-import time
 import random
 import numpy as np
-import pandas as pd
-import tensorflow as tf
-from numpy import genfromtxt
-from imblearn.over_sampling import SMOTE
-import os
-from collections import Counter
-from doepy import read_write
-from random import sample
-from utils.general import build_model
-from utils.hyperparameter_tuning import nn_l1_val, hyperparameter_tuning
-from sklearn import tree
+import warnings
 from sklearn.tree import DecisionTreeRegressor
-from utils.mlp_sparse_model_tf2 import MLPSparseModel
-from sklearn.cluster import KMeans
 from sklearn.model_selection import GridSearchCV
 from sklearn.ensemble import RandomForestClassifier
 from sklearn.feature_selection import mutual_info_regression
-from utils.SPL_sampling import generate_training_sizes
-from utils.general import get_non_zero_indexes, process_training_data
-import warnings
-from util.read_model import read_model_class
-from util.get_objective_model import get_path
-import pickle
-from utils.HINNPerf_args import list_of_param_dicts
 from utils.HINNPerf_data_preproc import system_samplesize, seed_generator, DataPreproc
 from utils.HINNPerf_args import list_of_param_dicts
 from utils.HINNPerf_models import MLPHierarchicalModel
 from utils.HINNPerf_model_runner import ModelRunner
 from sklearn.ensemble import RandomForestRegressor
+
 warnings.filterwarnings('ignore')
 
 def dimensions(lst):
     if not isinstance(lst, list):
-        return 0    # 非列表返回0维
+        return 0    
     if not lst:
-        return 1    # 空列表返回1维 
-    return 1 + dimensions(lst[0]) # 递归调用
+        return 1    
+    return 1 + dimensions(lst[0]) 
 
 def DaL_RF(X_train,Y_train,file_name,seed):
     # start11 = time.time()
@@ -53,9 +34,6 @@ def DaL_RF(X_train,Y_train,file_name,seed):
     Y_train_else = [[i] for i in Y_train]
     whole_data = np.concatenate([X_train, Y_train_else], axis=1) 
 
-    # whole_data = genfromtxt(file_name, delimiter=',', skip_header=1)
-    # print(type(whole_data))
-    # print(whole_data)
     (N, n) = whole_data.shape
     n = n - 1
 
@@ -69,7 +47,6 @@ def DaL_RF(X_train,Y_train,file_name,seed):
     max_depth = 1  ### to run experiments comparing different depths (RQ3), add depths here, starting from 1
     min_samples = 2 
     # compute the weights of each feature using Mutual Information, for eliminating insignificant features
-    ## whole_data为whole_data是一个N行n列的数组，表示N个样本的n个特征
     weights = []
     feature_weights = mutual_info_regression(whole_data[non_zero_indexes, 0:N_features],
                                                 whole_data[non_zero_indexes, -1], random_state=0)
@@ -223,7 +200,7 @@ def DaL_RF(X_train,Y_train,file_name,seed):
     # print(X_smo,y_smo)
     ### Train DNN_DaL
     print('----Training DaL_RF----')
-    from sklearn.linear_model import SGDRegressor, LinearRegression
+    
     # config_list = list_of_param_dicts(config)
     # print(k)
     for i in range(k):

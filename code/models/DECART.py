@@ -1,21 +1,15 @@
 import numpy as np
+import pandas as pd
+import warnings
 from numpy import genfromtxt
 from sklearn.tree import DecisionTreeRegressor
 from sklearn.model_selection import GridSearchCV
-import time
-import random
 from random import sample
 from utils.SPL_sampling import generate_training_sizes
 from utils.general import get_non_zero_indexes, process_training_data
-import pandas as pd
-import os
-import warnings
 from collections import Counter
 from doepy import read_write
 warnings.filterwarnings('ignore')
-
-
-
 
 
 def DECART(X_train,Y_train):

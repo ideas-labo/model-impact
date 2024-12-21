@@ -21,6 +21,7 @@ class ReplayMemory(object):
 
     def get_all(self):
         return self.actions, self.rewards
+    
 def distance(p1,p2):
 	p1 = np.array(p1)
 	p2 = np.array(p2)
@@ -64,15 +65,13 @@ def round_num(num, discrete_list):
             return_num = i
     return return_num
 
-
-
 def run_restune(initial_size, filename, model_name="GP",acqf_name = 'EI',budget=20,seed=0,maxlives=100):
     lives = maxlives
     results = []
     x_axis = []
     xs = []
     memory = ReplayMemory()
-    num_collections = initial_size  # 多少个已知量
+    num_collections = initial_size  
     file = read_file.get_data(filename, initial_size)
     header , features , target = read_file.load_features(file)
     best_result = 1e20
@@ -92,10 +91,7 @@ def run_restune(initial_size, filename, model_name="GP",acqf_name = 'EI',budget=
         reward = action.objective[-1]
         # print(reward)
         memory.push(np.array(action.decision), np.array([reward]))
-   
-    # 主循环  
     lens =len(header)
-
     pbounds = {}
     for name in range(lens):
         pbounds[name] = (0, 1)
@@ -117,8 +113,6 @@ def run_restune(initial_size, filename, model_name="GP",acqf_name = 'EI',budget=
             pickle.dump((Scaler_x,Scaler_y), f)
             f.close()
 
-
-
         if model_name == "GP":
             model = GaussianProcessRegressor()
             model.fit(train_x,train_y)
@@ -131,12 +125,8 @@ def run_restune(initial_size, filename, model_name="GP",acqf_name = 'EI',budget=
             model = bagging(train_x=train_x.tolist(),train_y=train_y.tolist(),learning_model=model_name,file_name=filename,seed=seed,step=global_step,funcname="restune")
             model.bagging_fit()
             model.save_model()
-        
         y_min = min(train_y)
-
         max_acq = None
-
-        # x_seeds = random.sample(features,10)  ## 模仿optimize_acqf的默认参数，少了十次重启
         x_seeds = np.random.RandomState(global_step).uniform(bounds[:, 0], bounds[:, 1],
                                  size=(20, bounds.shape[0]))
         tmps = []
@@ -157,17 +147,6 @@ def run_restune(initial_size, filename, model_name="GP",acqf_name = 'EI',budget=
             if max_acq is None or -res.fun >= max_acq:
                 x_max = res.x
                 max_acq = -res.fun
-                # print(res.fun)
-        # print("max_acq: ",max_acq)
-        # sort_merged_ei = sorted(tmps, key=lambda x: x[1], reverse=False)
-        # print(sort_merged_ei)
-        # for i,j in sort_merged_ei:
-        #     scaler_i = Scaler_x.inverse_transform([i])
-        #     origin_i = get_similar_x(file.dict_search,scaler_i[0])
-        #     if origin_i not in actions and origin_i not in xs:
-        #         x_max = i
-        #         break
-
         x_max = np.clip(x_max, bounds[:, 0], bounds[:, 1])
         x_max = list(x_max)
        
@@ -175,7 +154,6 @@ def run_restune(initial_size, filename, model_name="GP",acqf_name = 'EI',budget=
             x_max[i] = (max(file.independent_set[i])-min(file.independent_set[i]))*x_max[i] + min(file.independent_set[i])
 
         reward,tuple_i = get_objective.get_objective_score_with_similarity(file.dict_search, x_max)
-        # x_max = get_similar_x(file.dict_search,x_max)
         memory.push(np.array(x_max), np.array([reward]))
 
         if reward < best_result:

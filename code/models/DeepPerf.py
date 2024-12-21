@@ -1,34 +1,34 @@
 import numpy as np
-from numpy import genfromtxt
 import time
 import random
+import csv
+import pickle
+import os
+import pandas as pd
+import warnings
 from random import sample
+from numpy import genfromtxt
 from utils.SPL_sampling import generate_training_sizes
 from utils.general import get_non_zero_indexes, process_training_data
 from utils.hyperparameter_tuning import hyperparameter_tuning
-import pandas as pd
-import warnings
 from utils.mlp_sparse_model_tf2 import MLPSparseModel
 from utils.mlp_plain_model_tf2 import MLPPlainModel
 from doepy import read_write
-import os
 from collections import Counter
-import csv
-
 from util.read_model import read_model_class
 from util.get_objective_model import get_path
-import pickle
+
 
 warnings.filterwarnings('ignore')
 
 def dimensions(lst):
     if not isinstance(lst, list):
-        return 0    # 非列表返回0维
+        return 0  
     
     if not lst:
-        return 1    # 空列表返回1维 
+        return 1   
     
-    return 1 + dimensions(lst[0]) # 递归调用
+    return 1 + dimensions(lst[0]) 
 
 def DeepPerf(X_train,Y_train,file_name,seed):
  

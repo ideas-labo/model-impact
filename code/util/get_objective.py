@@ -1,13 +1,11 @@
 import random
+import time
 import numpy as np
 from scipy import spatial
 from sklearn.preprocessing import MinMaxScaler
-import time
 
 def get_objective_score(dict_search, best_solution):
     return dict_search.get(tuple(best_solution)) 
-
- 
 
 def get_objective_score_with_similarity(dict_search,best_solution):
     # print(dict_search)

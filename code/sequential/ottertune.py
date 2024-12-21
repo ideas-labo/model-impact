@@ -31,15 +31,14 @@ def run_ottertune(initial_size, filename, model_name="GP", acqf_name = "UCB",bud
     lasso.clean_data(encoded_knobs,file)
     lasso.reset_data(file,initial_size)
 
-    ## 开始
     results = []
     x_axis = []
     xs = []
     tuple_is = [t.decision for t in file.training_set]
 
     memory = read_file.ReplayMemory()
-    num_collections = initial_size  # 多少个已知量
-    num_samples = test_size     # 多少个样本
+    num_collections = initial_size  
+    num_samples = test_size    
     best_result = 1e20
     step = 0
 
@@ -47,16 +46,11 @@ def run_ottertune(initial_size, filename, model_name="GP", acqf_name = "UCB",bud
         action = file.training_set[i]
         reward = action.objective[-1]
         memory.push(np.array(action.decision), np.array([reward]))
-    # 主循环  # 关键是选了十个点
     
     while step+initial_size < budget:
         i = step
         step += 1
-        # 随机寻找样本点
         X_samples = np.array([i.decision for i in random.sample(file.testing_set, num_samples)])
-
-        # 对优秀的点周围增加探索
-        # 将其动作乘以0.97加上0.01，并将其添加到X_samples中。这样做的目的是为了利用之前获得的信息，增加探索优秀动作的概率。
         if i >= 10:
             actions, rewards = memory.get_all()
             tuples = tuple(zip(actions, rewards))

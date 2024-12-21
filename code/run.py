@@ -38,7 +38,7 @@ def run_main_free(seed,data,file,modelname,funcname,budget):
     elif funcname == "GGA":
         xs, result, used_budget = GGA.run_gga(filename, model_name=modelname, seed = seed,maxlives=maxlives,budget=budget)
     elif funcname == "E_search":
-        xs, result, used_budget = E_search.run_irace(filename, model_name=modelname, seed = seed,maxlives=maxlives,budget=budget)
+        xs, result, used_budget = E_search.E_search(filename, model_name=modelname, seed = seed,maxlives=maxlives,budget=budget)
     elif funcname == "paramILS":
         xs, result, used_budget = paramILS.run_paramILS(filename, model_name=modelname, seed = seed,maxlives=maxlives,budget=budget)
     elif funcname == "boca":

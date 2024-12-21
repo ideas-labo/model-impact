@@ -161,7 +161,7 @@ def run_ga(filename,model_name="GP",seed=1,maxlives= 100,budget=100):
     global dict_search,seed1,modelname,budget1
     budget1 = budget
     seed1=seed
-    maxlives = int(maxlives*3)
+    maxlives = int(maxlives)
     model_predict = 0
     file_name = filename
     max_lives = maxlives
