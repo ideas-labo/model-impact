@@ -1,7 +1,7 @@
 
 # Model-impact
 This repository contains the data and code for the following paper: 
-> Accuracy can Lie: On the Impact of Surrogate Model in Configuration Tuning
+> Pengzhou Chen, Jingzhi Gong, Tao Chen. (2025). Accuracy can Lie: On the Impact of Surrogate Model in Configuration Tuning. IEEE Transactions on Software Engineering, vol. 51, no.2, pp. 548 - 580, 2025.
 
 ##  1. <a name='Tableofcontent'></a>Table of content
 <!-- vscode-markdown-toc -->
